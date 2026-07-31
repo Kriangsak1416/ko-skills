@@ -75,8 +75,8 @@ dev → แตก branch '#1_add_text_builder' → ทำงาน → commit (�
 **ตอนจะขึ้น PRD (release)**
 
 ```
-dev → release/v.1.0.0 → merge feature ที่จะอัพ → รัน test →
-finish release (merge เข้า main + tag + merge กลับ dev) →
+dev → แตก branch 'v.1.0.0' → merge feature ที่จะอัพ → รัน test →
+finish release (merge เข้า main + merge กลับ dev + ลบ branch + tag) →
 เปิด PR dev → main ให้คนอื่น approve
 ```
 

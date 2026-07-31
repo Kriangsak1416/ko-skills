@@ -17,7 +17,7 @@ section — an empty section means an unanswered question for the reviewer.
 - `#2_fix_export_encoding` — แก้ encoding ตอน export CSV เป็นภาษาไทยแล้วเพี้ยน
 
 ### การทดสอบ
-- `npm test` — ผ่าน 128/128 (รันเมื่อ 2026-08-01 บน branch release/v.1.0.0)
+- `npm test` — ผ่าน 128/128 (รันเมื่อ 2026-08-01 บน branch v.1.0.0)
 - `npm run build` — ผ่าน
 - ทดสอบมือ: export รายงานภาษาไทย 3 ไฟล์ เปิดด้วย Excel แล้วอ่านได้ปกติ
 

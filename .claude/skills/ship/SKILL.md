@@ -1,6 +1,6 @@
 ---
 name: ship
-description: This team's git workflow — branch off dev as `#<n>_<slug>`, commit in Thai and push, then cut a `release/v.X.Y.Z` branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย".
+description: This team's git workflow — branch off dev as `#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย".
 ---
 
 # Ship — feature branch → release → PR
@@ -86,12 +86,20 @@ existing tags. Ask the user which part bumps unless they already said.
 
 ### 2. Cut the release branch from dev
 
+The branch is named for the version with no prefix — `v.1.0.0`, not
+`release/v.1.0.0`.
+
 ```
 git fetch origin
 git switch dev
 git pull --ff-only origin dev
-git switch -c release/v.1.0.0
+git switch -c 'v.1.0.0'
 ```
+
+The tag created in step 4 uses that same name, and git warns
+`refname 'v.1.0.0' is ambiguous` on every command while both refs exist. Step 4
+therefore deletes the branch **before** creating the tag. Never leave the two
+alive together.
 
 ### 3. Merge in the features for this version
 
@@ -100,7 +108,7 @@ Only the branches the user names — not everything that exists.
 ```
 git merge --no-ff '#1_add_text_builder'
 git merge --no-ff '#2_fix_export_encoding'
-git push -u origin release/v.1.0.0
+git push -u origin 'v.1.0.0'
 ```
 
 Run the full test suite here. This is the last checkpoint before main. On a
@@ -109,19 +117,21 @@ change wins.
 
 ### 4. Finish the release (git-flow standard)
 
-Merge into main, tag, merge back into dev, then delete the release branch.
+Merge into main, merge back into dev, **delete the branch, then tag** — in that
+order, so the branch and the tag never share the name at the same time.
 
 ```
 git switch main
 git pull --ff-only origin main
-git merge --no-ff release/v.1.0.0 -m 'รวม release v.1.0.0'
-git tag -a 'v.1.0.0' -m 'v.1.0.0 - 2026-08-01'
+git merge --no-ff 'v.1.0.0' -m 'รวม release v.1.0.0'
 git switch dev
-git merge --no-ff release/v.1.0.0 -m 'รวม release v.1.0.0 กลับเข้า dev'
+git merge --no-ff 'v.1.0.0' -m 'รวม release v.1.0.0 กลับเข้า dev'
 git push origin dev
+git branch -d 'v.1.0.0'
+git push origin --delete 'v.1.0.0'
+git switch main
+git tag -a 'v.1.0.0' -m 'v.1.0.0 - 2026-08-01'
 git push origin main --follow-tags
-git branch -d release/v.1.0.0
-git push origin --delete release/v.1.0.0
 ```
 
 Take the date from the system (`Get-Date -Format 'yyyy-MM-dd'`), never from
