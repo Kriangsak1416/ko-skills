@@ -13,13 +13,16 @@ dst="${HOME}/.claude"
 
 [ -d "$src" ] || { echo "Cannot find $src - run this script from the repo it shipped in." >&2; exit 1; }
 
-mkdir -p "$dst/agents" "$dst/skills"
+mkdir -p "$dst/agents" "$dst/skills" "$dst/rules"
 cp -R "$src/agents/." "$dst/agents/"
 cp -R "$src/skills/boss" "$dst/skills/"
+# One rule file only - leaves any other rules you already have untouched.
+cp "$src/rules/delegate-by-default.md" "$dst/rules/"
 
 echo "Installed to $dst"
 echo "  agents: coder, reviewer, scout, fixer  (model: sonnet)"
 echo "  skill:  boss                            (/boss)"
+echo "  rule:   delegate-by-default             (auto-delegates, no /boss needed)"
 echo
 
 settings="$dst/settings.json"

@@ -13,14 +13,18 @@ $dst = Join-Path $env:USERPROFILE '.claude'
 if (-not (Test-Path $src)) { throw "Cannot find $src - run this script from the repo it shipped in." }
 
 New-Item -ItemType Directory -Force -Path (Join-Path $dst 'agents') | Out-Null
-New-Item -ItemType Directory -Force -Path (Join-Path $dst 'skills')  | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $dst 'skills') | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $dst 'rules')  | Out-Null
 
 Copy-Item -Path (Join-Path $src 'agents\*') -Destination (Join-Path $dst 'agents') -Recurse -Force
 Copy-Item -Path (Join-Path $src 'skills\boss') -Destination (Join-Path $dst 'skills') -Recurse -Force
+# One rule file only - leaves any other rules you already have untouched.
+Copy-Item -Path (Join-Path $src 'rules\delegate-by-default.md') -Destination (Join-Path $dst 'rules') -Force
 
 Write-Host "Installed to $dst"
 Write-Host "  agents: coder, reviewer, scout, fixer  (model: sonnet)"
 Write-Host "  skill:  boss                            (/boss)"
+Write-Host "  rule:   delegate-by-default             (auto-delegates, no /boss needed)"
 Write-Host ""
 
 # Make sure the lead model is opus, without clobbering other settings.
