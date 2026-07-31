@@ -40,7 +40,8 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1   # Windows
 bash ./install.sh                                        # macOS / Linux
 ```
 
-สคริปต์จะก๊อป agents + skill ไปที่ `~/.claude/` และเช็คให้ว่า lead model เป็น opus
+สคริปต์จะก๊อป agents + skill ทุกตัว + rule ไปที่ `~/.claude/` (ทับเฉพาะไฟล์ชื่อ
+เดียวกัน ของเดิมที่คุณมีอยู่ไม่หาย) และเช็คให้ว่า lead model เป็น opus
 (ไม่ทับ settings เดิมของคุณ — แค่เตือนถ้าไม่ตรง) จากนั้นรีสตาร์ต Claude Code
 
 ## วิธีสั่งงาน

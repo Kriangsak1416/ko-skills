@@ -23,9 +23,9 @@ Copy-Item -Path (Join-Path $src 'rules\delegate-by-default.md') -Destination (Jo
 
 Write-Host "Installed to $dst"
 Write-Host "  agents: coder, reviewer, scout, fixer  (model: sonnet)"
-Write-Host "  skills: boss                            (/boss)"
-Write-Host "          ship                            (/ship - git flow + release PR)"
 Write-Host "  rule:   delegate-by-default             (auto-delegates, no /boss needed)"
+Write-Host "  skills:"
+Get-ChildItem -Directory (Join-Path $src 'skills') | ForEach-Object { Write-Host "          /$($_.Name)" }
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
     Write-Host ""

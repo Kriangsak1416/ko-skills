@@ -21,9 +21,9 @@ cp "$src/rules/delegate-by-default.md" "$dst/rules/"
 
 echo "Installed to $dst"
 echo "  agents: coder, reviewer, scout, fixer  (model: sonnet)"
-echo "  skills: boss                            (/boss)"
-echo "          ship                            (/ship - git flow + release PR)"
 echo "  rule:   delegate-by-default             (auto-delegates, no /boss needed)"
+echo "  skills:"
+for d in "$src"/skills/*/; do echo "          /$(basename "$d")"; done
 
 if ! command -v gh >/dev/null 2>&1; then
   echo
