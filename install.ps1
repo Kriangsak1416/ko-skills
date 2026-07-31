@@ -17,14 +17,21 @@ New-Item -ItemType Directory -Force -Path (Join-Path $dst 'skills') | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $dst 'rules')  | Out-Null
 
 Copy-Item -Path (Join-Path $src 'agents\*') -Destination (Join-Path $dst 'agents') -Recurse -Force
-Copy-Item -Path (Join-Path $src 'skills\boss') -Destination (Join-Path $dst 'skills') -Recurse -Force
+Copy-Item -Path (Join-Path $src 'skills\*') -Destination (Join-Path $dst 'skills') -Recurse -Force
 # One rule file only - leaves any other rules you already have untouched.
 Copy-Item -Path (Join-Path $src 'rules\delegate-by-default.md') -Destination (Join-Path $dst 'rules') -Force
 
 Write-Host "Installed to $dst"
 Write-Host "  agents: coder, reviewer, scout, fixer  (model: sonnet)"
-Write-Host "  skill:  boss                            (/boss)"
+Write-Host "  skills: boss                            (/boss)"
+Write-Host "          ship                            (/ship - git flow + release PR)"
 Write-Host "  rule:   delegate-by-default             (auto-delegates, no /boss needed)"
+
+if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+    Write-Host ""
+    Write-Host "NOTE: GitHub CLI not found. /ship needs it to open the release PR:"
+    Write-Host "      winget install --id GitHub.cli   then   gh auth login"
+}
 Write-Host ""
 
 # Make sure the lead model is opus, without clobbering other settings.

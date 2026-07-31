@@ -16,6 +16,9 @@
   skills/boss/
     SKILL.md                        # playbook ของ lead: วนลูป plan → dispatch → verify → integrate
     references/brief-template.md    # เทมเพลตใบสั่งงาน + checklist ก่อนส่ง + วิธีสั่งแก้งาน
+  skills/ship/
+    SKILL.md                        # git flow ของทีม: branch #N → commit/push → release → PR
+    references/pr-template.md       # เทมเพลต description ของ PR (version + วันที่ + งาน + การทดสอบ)
   rules/
     delegate-by-default.md          # กฎที่ทำให้แตกงานอัตโนมัติ ไม่ต้องพิมพ์ /boss
 install.ps1 / install.sh            # ติดตั้งลงเครื่องอื่น (ระดับ user, ใช้ได้ทุกโปรเจกต์)
@@ -57,6 +60,36 @@ bash ./install.sh                                        # macOS / Linux
 Opus จะ: สำรวจโค้ด → ตัดสินใจดีไซน์เอง → แตกเป็นงานย่อยที่**ไม่แก้ไฟล์ทับกัน** →
 ส่ง `coder` หลายตัวขนานกัน → **รัน test เองเพื่อตรวจ** (ไม่เชื่อรายงานของ engineer ลอย ๆ) →
 สั่งแก้ถ้าไม่ผ่าน → รวมงานและสรุปให้คุณ
+
+## อัพงานขึ้น git — `/ship`
+
+git flow ของทีมถูกฝังไว้ใน skill `ship` เรียกด้วย `/ship` หรือพิมพ์ธรรมดาว่า
+"commit ให้หน่อย" / "อัพงาน" / "ทำ release v.1.1.0" / "ขึ้น PRD" ก็ได้
+
+**งานปกติ (feature)**
+
+```
+dev → แตก branch '#1_add_text_builder' → ทำงาน → commit (ภาษาไทย สั้น ๆ) → push
+```
+
+**ตอนจะขึ้น PRD (release)**
+
+```
+dev → release/v.1.0.0 → merge feature ที่จะอัพ → รัน test →
+finish release (merge เข้า main + tag + merge กลับ dev) →
+เปิด PR dev → main ให้คนอื่น approve
+```
+
+PR ตั้ง title เป็น `v.1.0.0 - 2026-08-01` (version + วันที่) และ description
+ไล่ว่าอัพอะไรขึ้นไปบ้าง ทดสอบอะไรไปแล้ว มีผลกระทบอะไรต้องเตรียมก่อน deploy —
+ดูเทมเพลตที่ `skills/ship/references/pr-template.md`
+
+ต้องมี [GitHub CLI](https://cli.github.com) ถึงจะเปิด PR ให้อัตโนมัติได้
+(`winget install --id GitHub.cli` แล้ว `gh auth login`) ถ้าไม่มี skill จะพิมพ์
+title + description + ลิงก์ compare ให้ไปกดเอง
+
+สิ่งที่ skill จะไม่ทำเด็ดขาด: force push, rewrite history ที่ push ไปแล้ว,
+merge PR ของตัวเอง, เขียนใน PR ว่าทดสอบผ่านทั้งที่ไม่ได้รัน
 
 ## หลักการที่ฝังไว้ในชุดนี้
 
