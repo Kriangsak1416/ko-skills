@@ -19,6 +19,8 @@
   skills/ship/
     SKILL.md                        # git flow ของทีม: branch #N → commit/push → release → PR
     references/pr-template.md       # เทมเพลต description ของ PR (version + วันที่ + งาน + การทดสอบ)
+  skills/karpathy-guidelines/
+    SKILL.md                        # กันนิสัยเสียของ LLM: อย่าเดา อย่าเขียนเกิน แก้เฉพาะจุด (MIT)
   rules/
     delegate-by-default.md          # กฎที่ทำให้แตกงานอัตโนมัติ ไม่ต้องพิมพ์ /boss
 install.ps1 / install.sh            # ติดตั้งลงเครื่องอื่น (ระดับ user, ใช้ได้ทุกโปรเจกต์)
@@ -90,6 +92,21 @@ title + description + ลิงก์ compare ให้ไปกดเอง
 
 สิ่งที่ skill จะไม่ทำเด็ดขาด: force push, rewrite history ที่ push ไปแล้ว,
 merge PR ของตัวเอง, เขียนใน PR ว่าทดสอบผ่านทั้งที่ไม่ได้รัน
+
+## `karpathy-guidelines` — กันนิสัยเสียของ LLM
+
+Skill จากภายนอกที่รวมไว้ด้วย: 4 หลักการสั้น ๆ ที่ตัดปัญหาที่โมเดลชอบทำ —
+เดาแทนเราแล้วลุยต่อ, เขียนเกินความจำเป็น, ไปแก้โค้ดข้าง ๆ ที่ไม่เกี่ยว,
+และทำงานโดยไม่มีเกณฑ์ว่า "เสร็จ" คืออะไร
+
+เรียกเองด้วย `/karpathy-guidelines` หรือปล่อยให้ถูกเรียกอัตโนมัติตอนเขียน/รีวิว/
+refactor โค้ด — ใช้คู่กับ `boss` ได้ดี เพราะ engineer ที่รับใบสั่งงานจะได้ไม่
+"ปรับปรุงเพิ่มให้" นอกสโคป
+
+ที่มา: [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)
+โดย forrestchang (MIT) — ดัดแปลงจาก
+[โพสต์ของ Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876)
+ไฟล์ถูกคัดลอกมาตามต้นฉบับ ไม่ได้แก้เนื้อหา
 
 ## หลักการที่ฝังไว้ในชุดนี้
 
