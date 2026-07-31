@@ -25,8 +25,6 @@
   skills/scrutinize/                # 9arm — รีวิว plan/PR แบบคนนอก ไล่ code path จริง ไม่ดูแค่ diff
   skills/post-mortem/               # 9arm — เขียนบันทึกบั๊กหลังแก้เสร็จ (root cause / fix / validation)
   skills/management-talk/           # 9arm — แปลงเรื่อง eng เป็นภาษาผู้บริหาร แยกตามช่องทาง
-  skills/qwenchance/                # 9arm — กันวนลูป กันคิดยาว เฝ้า context แล้วสั่ง handoff
-  skills/qwen-agent/                # 9arm — โยนงานจำเจให้ qwen (ต้องมี claude-9arm ถึงใช้ได้)
   rules/
     delegate-by-default.md          # กฎที่ทำให้แตกงานอัตโนมัติ ไม่ต้องพิมพ์ /boss
 install.ps1 / install.sh            # ติดตั้งลงเครื่องอื่น (ระดับ user, ใช้ได้ทุกโปรเจกต์)
@@ -117,8 +115,8 @@ refactor โค้ด — ใช้คู่กับ `boss` ได้ดี เ
 
 ## skills ของ 9arm
 
-รวมมาจาก [thananon/9arm-skills](https://github.com/thananon/9arm-skills) ทั้ง 6 ตัว
-(ก๊อปตามต้นฉบับ) ตัวที่ได้ใช้บ่อยสุดน่าจะเป็น 3 ตัวแรก
+รวมมาจาก [thananon/9arm-skills](https://github.com/thananon/9arm-skills) เอามา 4 ตัว
+(ก๊อปตามต้นฉบับ)
 
 | skill | ใช้ตอนไหน |
 |---|---|
@@ -126,15 +124,11 @@ refactor โค้ด — ใช้คู่กับ `boss` ได้ดี เ
 | `/scrutinize` | รีวิว plan / PR / diff แบบคนนอก ถามก่อนว่า "จำเป็นต้องทำไหม มีทางที่ง่ายกว่าไหม" แล้วค่อยไล่ code path จริง ห้ามตอบ LGTM ลอย ๆ |
 | `/post-mortem` | บั๊กแก้เสร็จและ validate แล้ว เขียนบันทึกให้คนอื่น (ถ้ายังไม่มี repro / ยังไม่รู้ root cause มันจะปฏิเสธไม่เขียนให้) |
 | `/management-talk` | แปลงเรื่อง technical เป็นภาษาผู้บริหาร แยกทรงตามช่องทาง (JIRA / Slack / standup / email) |
-| `/qwenchance` | งานยาว ๆ ที่เริ่มวนลูปหรือ context ใกล้เต็ม |
-| `/qwen-agent` | โยนงานจำเจให้โมเดลถูก ๆ ทำ |
 
-**สองข้อควรรู้:**
-
-- `/qwen-agent` ใช้ไม่ได้บนเครื่องนี้ ต้องมีคำสั่ง `claude-9arm` (alias ไป gateway
-  ส่วนตัวของ 9arm) ซึ่งเราไม่มี — เก็บไว้เฉย ๆ หรือจะลบทิ้งก็ได้
-- `/qwenchance` ขั้นสุดท้ายสั่งให้เรียก skill ชื่อ `handoff` ซึ่งไม่ได้อยู่ใน repo
-  ต้นทาง ถ้าไปถึงขั้นนั้นมันจะหาไม่เจอแล้ว fallback เป็นสรุปเอง
+ต้นฉบับมีอีก 2 ตัวที่ไม่ได้เอามา — `qwen-agent` (โยนงานจำเจให้ qwen ผ่านคำสั่ง
+`claude-9arm` ซึ่งเป็น gateway ส่วนตัวของเจ้าของ repo) และ `qwenchance`
+(กันวนลูป/เฝ้า context) การโยนงานให้โมเดลถูกกว่าทำอยู่แล้วผ่าน `/boss` + agent
+`coder` ที่เป็น sonnet เลยไม่ต้องมีอีกตัว
 
 แก้จากต้นฉบับจุดเดียว: ลิงก์ใน `post-mortem` ที่ชี้ไป `../../productivity/management-talk/`
 เปลี่ยนเป็น `../management-talk/` เพราะที่นี่วาง skill เรียงแบนไม่ได้แยก bucket
