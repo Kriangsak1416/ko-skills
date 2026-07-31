@@ -1,6 +1,6 @@
 ---
 name: scout
-description: Sonnet research/reconnaissance worker, read-only. Use before planning to map an unfamiliar codebase, find where a behaviour lives, trace call sites, or gather the facts the lead needs to make a design decision. Returns findings with file:line, never edits.
+description: Sonnet research/reconnaissance engineer, read-only. Use before planning to map an unfamiliar codebase, find where a behaviour lives, trace call sites, or gather the facts the lead needs to make a design decision. Returns findings with file:line, never edits.
 tools: Read, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
 ---

@@ -1,9 +1,9 @@
 # Delegation brief template
 
-The worker starts with **zero** context from your conversation. It cannot see
+The engineer starts with **zero** context from your conversation. It cannot see
 the user's request, your plan, the other tasks, or anything you have read. Copy
 this shape into the Agent `prompt` and fill every section — an omitted section
-becomes an assumption the worker invents.
+becomes an assumption the engineer invents.
 
 ````
 ## Goal
@@ -38,7 +38,7 @@ Expected: `<what passing looks like>`
 Do not report done until this passes.
 
 ## Out of scope
-- <adjacent thing the worker must not "improve">
+- <adjacent thing the engineer must not "improve">
 - Do not commit, push, or change git history.
 - Do not add dependencies without reporting it first.
 
@@ -72,4 +72,4 @@ Change nothing else.
 ```
 
 Start a fresh agent instead when the original brief was wrong, or when the
-worker's context is polluted by a long chain of failed attempts.
+engineer's context is polluted by a long chain of failed attempts.

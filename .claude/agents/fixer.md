@@ -1,6 +1,6 @@
 ---
 name: fixer
-description: Sonnet debugging worker. Use when something is broken and the cause is unknown — failing tests, runtime errors, CI failures. It reproduces, isolates the root cause, fixes it minimally, and proves the fix. Give it the failing command and the observed output.
+description: Sonnet debugging engineer. Use when something is broken and the cause is unknown — failing tests, runtime errors, CI failures. It reproduces, isolates the root cause, fixes it minimally, and proves the fix. Give it the failing command and the observed output.
 tools: Read, Write, Edit, Glob, Grep, Bash, TodoWrite
 model: sonnet
 ---

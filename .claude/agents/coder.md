@@ -1,6 +1,6 @@
 ---
 name: coder
-description: Sonnet implementation worker. Use for writing or modifying code from a concrete spec — new features, refactors, bug fixes, tests. The dispatcher must supply files to touch, the exact change wanted, and how to verify it. Not for open-ended design decisions.
+description: Sonnet implementation engineer. Use for writing or modifying code from a concrete spec — new features, refactors, bug fixes, tests. The dispatcher must supply files to touch, the exact change wanted, and how to verify it. Not for open-ended design decisions.
 tools: Read, Write, Edit, Glob, Grep, Bash, NotebookEdit, TodoWrite
 model: sonnet
 ---
