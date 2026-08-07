@@ -172,8 +172,21 @@ v.1.0.0 - 2026-08-01
 Body — fill in `references/pr-template.md`. Write it to a temp file and pass
 `--body-file`; Thai text with newlines through shell quoting is fragile.
 
-**Show the user the title and body, and get a yes, before creating the PR** —
-creating it notifies reviewers.
+**Step 5 is not optional and it is not a separate errand.** "อัพขึ้น PRD เลย"
+means the release ends with a PR open — walking away after the tag and waiting to
+be asked for the PR is an unfinished job.
+
+**`เลย` is the yes.** When the instruction carries it — "อัพขึ้น PRD เลย",
+"ทำ release เลย" — write the body and run `gh pr create`, then show the title and
+body in the reply after the fact. Do not stop mid-flow to ask permission for a
+step the user already ordered. Without `เลย`, show the title and body and get a
+yes first; creating the PR notifies reviewers.
+
+**Open the PR even when `git push origin main` succeeded.** On a repo where main
+is not protected, the release is already on main by the time step 5 runs, so the
+PR shows zero changed files — that is correct, not a reason to skip it. It is the
+team's release record. Say so in the first line of the body, with the merge
+commit and tag, so the reviewer is not left wondering why the diff is empty.
 
 ```
 gh pr create --base main --head dev --title 'v.1.0.0 - 2026-08-01' --body-file <path>
