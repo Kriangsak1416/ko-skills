@@ -1,6 +1,6 @@
 ---
 name: ship
-description: This team's git workflow — branch off dev as `#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย".
+description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย".
 ---
 
 # Ship — feature branch → release → PR
@@ -21,6 +21,38 @@ in bash, and in git commit messages. Three consequences, all verified:
   `commit.cleanup=strip` reads the whole subject as a comment and aborts with
   `Aborting commit due to empty commit message`.
 - **In GitHub URLs `#` is `%23`** — `.../compare/main...%231_add_text_builder`.
+
+## Match the repo, not these examples
+
+The branch names below are **examples**. Every repo names things a little
+differently and the repo always wins. Before the first command, look:
+
+```
+git branch -a --format='%(refname:short)'
+git tag --list 'v.*' --sort=-v:refname | head
+git log --merges --format='%h %s' -8 origin/main
+```
+
+Read three things off that output — getting any of them wrong produces a branch
+or a message that does not match its neighbours:
+
+- **The integration branch** — `dev` or `develop`. This document says `dev`;
+  substitute whatever the repo actually has.
+- **The feature-branch prefix** — bare `#<n>_<slug>` or `feature/#<n>_<slug>`.
+  Take it from the existing branches, and number from the highest `#N` there,
+  remote branches included — the local list is usually missing some.
+- **The merge-message wording** — `git log --merges` on main shows the exact
+  Thai phrasing previous releases used. Reuse it verbatim with the new numbers.
+
+Say in one line which conventions you found before starting.
+
+Recorded from `sv-api` (the Lumen API repo), verified on the v.1.10.10 release:
+integration branch is **`develop`**, feature branches are
+**`feature/#<n>_<slug>`**, feature merges into the release branch are worded
+`รวม feature/#56_icu_bed_occupancy_bedtype เข้า release v.1.10.10`, and `main`
+is **not protected** — the step-4 push to main succeeds, so step 5's PR is
+purely the release record. An old `release/v.1.6.0` branch still sits on origin
+from a retired convention; do not copy it.
 
 ## Flow A — feature work
 
@@ -82,7 +114,9 @@ git tag --list 'v.*' --sort=-v:refname
 ```
 
 Format is `v.MAJOR.MINOR.PATCH` — note the dot after `v`, matching the team's
-existing tags. Ask the user which part bumps unless they already said.
+existing tags. Ask the user which part bumps unless they already said. Look at
+what size bump comparable work got last time and lead with that as the
+recommendation, so the question is one click rather than a research task.
 
 ### 2. Cut the release branch from dev
 
@@ -106,10 +140,14 @@ alive together.
 Only the branches the user names — not everything that exists.
 
 ```
-git merge --no-ff '#1_add_text_builder'
-git merge --no-ff '#2_fix_export_encoding'
+git merge --no-ff '#1_add_text_builder' -m 'รวม #1_add_text_builder เข้า release v.1.0.0'
+git merge --no-ff '#2_fix_export_encoding' -m 'รวม #2_fix_export_encoding เข้า release v.1.0.0'
 git push -u origin 'v.1.0.0'
 ```
+
+Pass `-m` rather than accepting git's default `Merge branch ...` message — the
+release history is read in Thai, and the wording to copy is whatever
+`git log --merges` showed in the conventions check.
 
 Run the full test suite here. This is the last checkpoint before main. On a
 merge conflict that is not trivially obvious, stop and ask — do not guess whose
