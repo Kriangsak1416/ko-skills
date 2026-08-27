@@ -21,13 +21,21 @@
     references/pr-template.md       # เทมเพลต description ของ PR (version + วันที่ + งาน + การทดสอบ)
   skills/karpathy-guidelines/
     SKILL.md                        # กันนิสัยเสียของ LLM: อย่าเดา อย่าเขียนเกิน แก้เฉพาะจุด (MIT)
+  skills/qa/
+    SKILL.md                        # ตรวจก่อนขึ้น PRD: build → bug → web security → migrations → GO/NO-GO
+    references/web-security-checklist.md  # เช็คลิสต์ความปลอดภัยเว็บ 10 หมวด + คำสั่งสแกนจริง
+  skills/next-static-pack/
+    SKILL.md                        # Next.js -> static export -> ชุดพร้อมวางบน Apache
+    references/flatten-segments.mjs # แก้บั๊กชื่อไฟล์ RSC segment ที่ next build บน Windows เขียนผิด
+    references/pack-deploy.mjs      # เทมเพลตแพ็ก out/ + เขียน .htaccess (CSP/headers) ให้
   skills/debug-mantra/              # 9arm — วินัยดีบัก 4 ข้อ: repro → fail path → falsify → breadcrumb
   skills/scrutinize/                # 9arm — รีวิว plan/PR แบบคนนอก ไล่ code path จริง ไม่ดูแค่ diff
   skills/post-mortem/               # 9arm — เขียนบันทึกบั๊กหลังแก้เสร็จ (root cause / fix / validation)
   skills/management-talk/           # 9arm — แปลงเรื่อง eng เป็นภาษาผู้บริหาร แยกตามช่องทาง
   rules/
     delegate-by-default.md          # กฎที่ทำให้แตกงานอัตโนมัติ ไม่ต้องพิมพ์ /boss
-install.ps1 / install.sh            # ติดตั้งลงเครื่องอื่น (ระดับ user, ใช้ได้ทุกโปรเจกต์)
+    qa-before-prd.md                # ก่อน build ขึ้น PRD ต้องถามก่อนว่าจะรัน /qa ไหม
+install.sh                          # ติดตั้งลงเครื่องอื่น (ระดับ user, ใช้ได้ทุกโปรเจกต์)
 ```
 
 ## เอาไปใช้เครื่องอื่น
@@ -37,11 +45,8 @@ install.ps1 / install.sh            # ติดตั้งลงเครื่
 
 **แบบที่ 2 — ทั้งเครื่อง:** ก๊อปโฟลเดอร์นี้ไป แล้วรัน
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1   # Windows
-```
 ```bash
-bash ./install.sh                                        # macOS / Linux
+bash ./install.sh
 ```
 
 สคริปต์จะก๊อป agents + skill ทุกตัว + rule ไปที่ `~/.claude/` (ทับเฉพาะไฟล์ชื่อ
@@ -98,6 +103,28 @@ title + description + ลิงก์ compare ให้ไปกดเอง
 สิ่งที่ skill จะไม่ทำเด็ดขาด: force push, rewrite history ที่ push ไปแล้ว,
 merge PR ของตัวเอง, เขียนใน PR ว่าทดสอบผ่านทั้งที่ไม่ได้รัน
 
+## `/qa` — ตรวจก่อนขึ้น PRD
+
+Release engineer audit ก่อนเอาของขึ้น production 4 เฟส
+
+1. **Build readiness** — รัน build/typecheck/lint จริง, env ครบไหม, dev-only code หลุดไหม
+2. **Bug audit** — logic / error handling / DB / concurrency พร้อม severity และ `file:line`
+3. **Web security audit** — 10 หมวดตาม OWASP Top 10 (2021) + API Security Top 10 (2023):
+   secret ที่ติดไปกับ bundle, auth/session, **IDOR** (เปลี่ยนเลขใน URL แล้วเห็นของคนอื่น),
+   injection/XSS, CSRF/CORS/SSRF, headers+CSP, upload/rate limit, supply chain,
+   **ข้อมูลผู้ป่วย/PDPA**, endpoint ที่ไม่ควรเปิด
+4. **Migrations must-run-immediately** — fresh + production-like, rollback, MariaDB 5.5 (utf8mb4 index 191)
+
+จบด้วยตาราง severity, รายการ blocker, migration runbook และคำตัดสิน
+**GO / NO-GO** — มี blocker แม้ข้อเดียว = NO-GO แล้ว**หยุดรออนุมัติก่อนแก้**
+
+รันเองด้วย `/qa` ก็ได้ แต่ไม่ต้องจำ — `rules/qa-before-prd.md` ทำให้ทุกครั้งที่สั่ง
+build/แพ็ก/release ขึ้น production (รวมถึง `/ship` Flow B กับ `npm run pack` ของ
+`next-static-pack`) ถามก่อนหนึ่งครั้งว่าจะรัน QA ก่อนไหม
+
+คำว่า "เลย" ไม่ข้ามคำถามนี้ — "อัพขึ้น PRD เลย" แปลว่าไม่ต้องขออนุมัติเป็นขั้น ๆ
+ไม่ได้แปลว่าไม่ต้องทดสอบ สั่ง "ไม่ต้อง QA" หรือ "build เลย" ถึงจะข้าม
+
 ## `karpathy-guidelines` — กันนิสัยเสียของ LLM
 
 Skill จากภายนอกที่รวมไว้ด้วย: 4 หลักการสั้น ๆ ที่ตัดปัญหาที่โมเดลชอบทำ —
@@ -112,6 +139,29 @@ refactor โค้ด — ใช้คู่กับ `boss` ได้ดี เ
 โดย forrestchang (MIT) — ดัดแปลงจาก
 [โพสต์ของ Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876)
 ไฟล์ถูกคัดลอกมาตามต้นฉบับ ไม่ได้แก้เนื้อหา
+
+## `next-static-pack` — build เว็บ Next ขึ้น Apache
+
+เว็บ Next ของเรารันบน Apache ที่ **ไม่มี Node** ทุกตัวจึงต้อง build เป็น static
+export แล้ววางทั้งโฟลเดอร์ใน DocumentRoot ใต้ path ย่อย skill นี้เก็บสูตรทั้งชุด
+ที่ใช้จริงกับ `icu refer` และ `ICU Dashboard` มาแล้ว
+
+```
+npm run pack   =   next build  →  flatten-segments  →  pack-deploy
+```
+
+- **`flatten-segments.mjs`** — `next build` บน Windows เขียนชื่อไฟล์ prefetch
+  (`__next.*.txt`) เป็นโฟลเดอร์ซ้อนแทนไฟล์แบน ทำให้ชี้เมนูแล้ว prefetch ได้ 404
+  สคริปต์ยุบกลับให้ถูก (บน Linux ไม่มีปัญหานี้ มันจะจบเงียบ ๆ)
+- **`pack-deploy.mjs`** — ก๊อป `out/` ไปปลายทางนอกโปรเจกต์ แล้วเขียน `.htaccess`
+  (RewriteBase, security headers, **CSP ที่ล็อก `connect-src` ไว้ที่ origin ของ
+  `NEXT_PUBLIC_API_URL` เจ้าเดียว**) กับ `README.txt` วิธีวางให้ทีมเซิร์ฟเวอร์
+
+basePath ถูกอ่านจาก `src/lib/basePath.ts` ที่เป็นแหล่งความจริงที่เดียว ไม่ได้
+hardcode ไว้ในสคริปต์ — เปลี่ยน path แล้ว `RewriteBase` ตามให้เอง
+
+ใน SKILL.md มี checklist ก่อนบอกว่าเสร็จ (ต้องไม่เหลือโฟลเดอร์ `__next.*`,
+CSP ต้องตรงกับที่แอปยิงจริง) และตารางว่าแอปใช้อะไรแล้วต้องเปิด CSP ตัวไหน
 
 ## skills ของ 9arm
 

@@ -107,6 +107,15 @@ a PR and does not touch dev.
 
 ## Flow B — release to PRD
 
+### 0. Ask about QA first
+
+The `qa-before-prd` rule applies to every Flow B run: before cutting anything,
+ask once whether to run the `qa` audit. A **NO-GO verdict stops the release** —
+report the blockers, do not cut the release branch.
+
+`เลย` authorizes the release steps so you do not stop mid-flow for permission; it
+is not an answer to whether the system gets tested first. Ask once, up front.
+
 ### 1. Decide the version
 
 ```

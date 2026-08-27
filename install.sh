@@ -16,12 +16,13 @@ dst="${HOME}/.claude"
 mkdir -p "$dst/agents" "$dst/skills" "$dst/rules"
 cp -R "$src/agents/." "$dst/agents/"
 cp -R "$src/skills/." "$dst/skills/"
-# One rule file only - leaves any other rules you already have untouched.
-cp "$src/rules/delegate-by-default.md" "$dst/rules/"
+# Only the rules that ship in this repo - leaves any other rules you already have untouched.
+for f in "$src"/rules/*.md; do cp "$f" "$dst/rules/"; done
 
 echo "Installed to $dst"
 echo "  agents: coder, reviewer, scout, fixer  (model: sonnet)"
-echo "  rule:   delegate-by-default             (auto-delegates, no /boss needed)"
+echo "  rules:"
+for f in "$src"/rules/*.md; do echo "          $(basename "$f")"; done
 echo "  skills:"
 for d in "$src"/skills/*/; do echo "          /$(basename "$d")"; done
 
