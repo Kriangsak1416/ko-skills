@@ -35,7 +35,6 @@
   rules/
     delegate-by-default.md          # กฎที่ทำให้แตกงานอัตโนมัติ ไม่ต้องพิมพ์ /boss
     qa-before-prd.md                # ก่อน build ขึ้น PRD ต้องถามก่อนว่าจะรัน /qa ไหม
-install.sh                          # ติดตั้งลงเครื่องอื่น (ระดับ user, ใช้ได้ทุกโปรเจกต์)
 ```
 
 ## เอาไปใช้เครื่องอื่น
@@ -43,15 +42,21 @@ install.sh                          # ติดตั้งลงเครื่
 **แบบที่ 1 — เฉพาะโปรเจกต์:** ก๊อป `.claude/` ทั้งโฟลเดอร์ไปวางที่ root ของโปรเจกต์นั้น
 จบ ไม่ต้องติดตั้งอะไรเพิ่ม (commit เข้า git ได้เลย ทีมทั้งทีมได้ใช้เหมือนกัน)
 
-**แบบที่ 2 — ทั้งเครื่อง:** ก๊อปโฟลเดอร์นี้ไป แล้วรัน
+**แบบที่ 2 — ทั้งเครื่อง:** ก๊อปของใน `.claude/` ไปไว้ที่ `~/.claude/` เอง
 
 ```bash
-bash ./install.sh
+mkdir -p ~/.claude/agents ~/.claude/skills ~/.claude/rules
+cp -R .claude/agents/. ~/.claude/agents/
+cp -R .claude/skills/. ~/.claude/skills/
+cp    .claude/rules/*.md ~/.claude/rules/
 ```
 
-สคริปต์จะก๊อป agents + skill ทุกตัว + rule ไปที่ `~/.claude/` (ทับเฉพาะไฟล์ชื่อ
-เดียวกัน ของเดิมที่คุณมีอยู่ไม่หาย) และเช็คให้ว่า lead model เป็น opus
-(ไม่ทับ settings เดิมของคุณ — แค่เตือนถ้าไม่ตรง) จากนั้นรีสตาร์ต Claude Code
+ทับเฉพาะไฟล์ชื่อเดียวกัน agent/skill/rule อื่นที่มีอยู่ไม่หาย
+แล้วเช็คว่า `~/.claude/settings.json` มี `"model": "opus"` หรือยัง — boss mode
+คาดว่า lead เป็น opus ถ้ายังไม่ตรงตั้งด้วย `/model opus` จากนั้นรีสตาร์ต Claude Code
+
+`/ship` ต้องใช้ GitHub CLI ตอนเปิด PR — ถ้ายังไม่มี `gh`:
+`winget install --id GitHub.cli` แล้ว `gh auth login`
 
 ## วิธีสั่งงาน
 
