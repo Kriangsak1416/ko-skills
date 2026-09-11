@@ -55,8 +55,19 @@ cp    .claude/rules/*.md ~/.claude/rules/
 แล้วเช็คว่า `~/.claude/settings.json` มี `"model": "opus"` หรือยัง — boss mode
 คาดว่า lead เป็น opus ถ้ายังไม่ตรงตั้งด้วย `/model opus` จากนั้นรีสตาร์ต Claude Code
 
-`/ship` ต้องใช้ GitHub CLI ตอนเปิด PR — ถ้ายังไม่มี `gh`:
-`winget install --id GitHub.cli` แล้ว `gh auth login`
+**ลง GitHub CLI + login** (ทั้ง 2 แบบ) — `/ship` ใช้ `gh` ตอนเปิด PR รันครั้งเดียวต่อเครื่อง:
+
+```powershell
+winget install --id GitHub.cli --accept-source-agreements --accept-package-agreements
+gh auth login --hostname github.com --git-protocol https --web
+```
+
+บรรทัดที่สองจะโชว์โค้ด `XXXX-XXXX` แล้วเปิดเบราว์เซอร์ให้เอาโค้ดไปกรอกที่
+github.com/login/device เสร็จแล้วเช็คด้วย `gh auth status` (เปิด PowerShell ใหม่
+ก่อนถ้ายังหา `gh` ไม่เจอหลัง winget ติดตั้งเสร็จ)
+
+ข้ามขั้นนี้ก็ได้ — ถ้าตอน `/ship` ถึงขั้นเปิด PR แล้วยังไม่มี `gh` skill จะ
+ติดตั้งและพา login ให้เองตอนนั้น
 
 ## วิธีสั่งงาน
 
@@ -101,8 +112,9 @@ PR ตั้ง title เป็น `v.1.0.0 - 2026-08-01` (version + วัน�
 ไล่ว่าอัพอะไรขึ้นไปบ้าง ทดสอบอะไรไปแล้ว มีผลกระทบอะไรต้องเตรียมก่อน deploy —
 ดูเทมเพลตที่ `skills/ship/references/pr-template.md`
 
-ต้องมี [GitHub CLI](https://cli.github.com) ถึงจะเปิด PR ให้อัตโนมัติได้
-(`winget install --id GitHub.cli` แล้ว `gh auth login`) ถ้าไม่มี skill จะพิมพ์
+เปิด PR ผ่าน [GitHub CLI](https://cli.github.com) — ถ้าเครื่องยังไม่มี `gh` หรือ
+ยังไม่ login skill จะ `winget install` ให้แล้วรัน `gh auth login --web` เอง
+คุณแค่เอาโค้ดที่มันโชว์ไปกรอกในเบราว์เซอร์ ถ้าไม่อยากลง skill จะพิมพ์
 title + description + ลิงก์ compare ให้ไปกดเอง
 
 สิ่งที่ skill จะไม่ทำเด็ดขาด: force push, rewrite history ที่ push ไปแล้ว,

@@ -207,8 +207,31 @@ git push origin 'v.1.0.0'
 
 ### 5. Open the pull request (dev → main)
 
-Requires the GitHub CLI. Check `gh auth status` first; if `gh` is missing, tell
-the user to run `winget install --id GitHub.cli` then `gh auth login`.
+Requires the GitHub CLI. Run `gh auth status` first. If `gh` is missing or not
+logged in, **install and log in yourself — do not hand the user a command to run.**
+
+Install (Windows; on macOS use `brew install gh`):
+
+```
+winget install --id GitHub.cli --accept-source-agreements --accept-package-agreements
+```
+
+The current shell does not pick up the new PATH, so for the rest of this session
+call it as `"C:\Program Files\GitHub CLI\gh.exe"` if bare `gh` is still not found.
+
+Log in with the browser device flow. It needs no keyboard input, so it works from
+the Bash tool — run it in the background with a long timeout, because it blocks
+until the user finishes in the browser:
+
+```
+gh auth login --hostname github.com --git-protocol https --web
+```
+
+The output prints a one-time code (`XXXX-XXXX`) and the URL
+`https://github.com/login/device`. Relay both to the user immediately, then wait
+for the command to exit. Confirm with `gh auth status` before continuing; if it
+still fails, stop and report — do not fall back to `--with-token` or ask the user
+to paste a token into the chat.
 
 Title — version, then date:
 
@@ -239,8 +262,8 @@ commit and tag, so the reviewer is not left wondering why the diff is empty.
 gh pr create --base main --head dev --title 'v.1.0.0 - 2026-08-01' --body-file <path>
 ```
 
-If the user would rather not install `gh`, print the filled title and body for
-them to paste, plus the compare link:
+If the user refuses the install or the login, print the filled title and body
+for them to paste, plus the compare link:
 `https://github.com/<owner>/<repo>/compare/main...dev?expand=1`
 
 Report the PR URL when it is created. **Do not merge it** — someone else
