@@ -1,75 +1,147 @@
-# Tech lead + engineers — ทีม AI ที่แบ่งงานกันเอง
+# ko-skills
 
-ชุด config แบบพกพาสำหรับ Claude Code: **Opus 5** เป็น tech lead (คิด วางแผน
-แตกงาน รีวิว รวมงาน) และ **Sonnet** เป็น engineer ที่ลงมือเขียนโค้ดจริง
+> รวม skills, agents และ rules สำหรับ [Claude Code](https://code.claude.com) ที่ใช้งานจริงในเครื่องของ ko
+> จัดโครงสร้างตามแบบ [anthropics/skills](https://github.com/anthropics/skills) — skill ละโฟลเดอร์ มี `SKILL.md` เป็นหัวใจ
 
-## ไฟล์ในชุดนี้
+Skill คือโฟลเดอร์ที่มีคำสั่ง สคริปต์ และไฟล์อ้างอิง ซึ่ง Claude โหลดขึ้นมาเองเมื่องาน
+ตรงกับที่ `description` บอกไว้ ทำให้สั่งงานซ้ำ ๆ ได้ผลเหมือนเดิมทุกครั้ง — ตั้งแต่
+วิธีแตกงานให้ subagent, git flow ของทีม, การตรวจก่อนขึ้น PRD ไปจนถึงสูตร build Next.js ขึ้น Apache
+
+อ่านเพิ่ม:
+- [What are skills?](https://support.claude.com/en/articles/12512176-what-are-skills)
+- [How to create custom skills](https://support.claude.com/en/articles/12512198-creating-custom-skills)
+- [Agent Skills specification](http://agentskills.io)
+
+# เกี่ยวกับ repo นี้
+
+แกนหลักคือ **ทีม AI ที่แบ่งงานกันเอง** — **Opus** เป็น tech lead (คิด วางแผน แตกงาน
+รีวิว รวมงาน) และ **Sonnet** เป็น engineer ที่ลงมือเขียนโค้ดจริง — ครอบด้วย skill สำหรับ
+git flow, QA ก่อน release และ deploy ส่วนที่เหลือเป็น skill ที่รวบรวมมาจากภายนอก
+(Anthropic, 9arm, Karpathy) ซึ่งเก็บไว้ตามต้นฉบับ ดูที่มาและ license ได้ที่
+[THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)
+
+ทุก skill อยู่ในโฟลเดอร์ของตัวเองใต้ [`skills/`](./skills) และมี `SKILL.md`
+เป็นไฟล์เดียวที่ Claude ต้องอ่าน ไฟล์อื่นในโฟลเดอร์ (references, scripts) ถูกอ้างจาก
+`SKILL.md` ตามต้องการ
+
+# โครงสร้าง
 
 ```
-.claude/
-  settings.json                     # ตั้ง lead model = opus, effort = high, permission พื้นฐาน
-  agents/
-    coder.md                        # sonnet — เขียน/แก้โค้ดตามสเปกที่ lead ตัดสินใจแล้ว
-    fixer.md                        # sonnet — ดีบัก หาสาเหตุจริง แก้แบบน้อยที่สุด พร้อมพิสูจน์
-    reviewer.md                     # sonnet — รีวิว diff หาบั๊ก (อ่านอย่างเดียว ไม่แก้)
-    scout.md                        # sonnet — สำรวจโค้ดเบส หา call site ก่อนวางแผน
-  skills/boss/
-    SKILL.md                        # playbook ของ lead: วนลูป plan → dispatch → verify → integrate
-    references/brief-template.md    # เทมเพลตใบสั่งงาน + checklist ก่อนส่ง + วิธีสั่งแก้งาน
-  skills/ship/
-    SKILL.md                        # git flow ของทีม: branch #N → commit/push → release → PR
-    references/pr-template.md       # เทมเพลต description ของ PR (version + วันที่ + งาน + การทดสอบ)
-  skills/karpathy-guidelines/
-    SKILL.md                        # กันนิสัยเสียของ LLM: อย่าเดา อย่าเขียนเกิน แก้เฉพาะจุด (MIT)
-  skills/qa/
-    SKILL.md                        # ตรวจก่อนขึ้น PRD: build → bug → web security → migrations → GO/NO-GO
-    references/web-security-checklist.md  # เช็คลิสต์ความปลอดภัยเว็บ 10 หมวด + คำสั่งสแกนจริง
-  skills/next-static-pack/
-    SKILL.md                        # Next.js -> static export -> ชุดพร้อมวางบน Apache
-    references/flatten-segments.mjs # แก้บั๊กชื่อไฟล์ RSC segment ที่ next build บน Windows เขียนผิด
-    references/pack-deploy.mjs      # เทมเพลตแพ็ก out/ + เขียน .htaccess (CSP/headers) ให้
-  skills/debug-mantra/              # 9arm — วินัยดีบัก 4 ข้อ: repro → fail path → falsify → breadcrumb
-  skills/scrutinize/                # 9arm — รีวิว plan/PR แบบคนนอก ไล่ code path จริง ไม่ดูแค่ diff
-  skills/post-mortem/               # 9arm — เขียนบันทึกบั๊กหลังแก้เสร็จ (root cause / fix / validation)
-  skills/management-talk/           # 9arm — แปลงเรื่อง eng เป็นภาษาผู้บริหาร แยกตามช่องทาง
-  rules/
-    delegate-by-default.md          # กฎที่ทำให้แตกงานอัตโนมัติ ไม่ต้องพิมพ์ /boss
-    qa-before-prd.md                # ก่อน build ขึ้น PRD ต้องถามก่อนว่าจะรัน /qa ไหม
+.claude-plugin/marketplace.json   # ลงผ่าน /plugin marketplace add ได้เลย
+skills/                           # skill ละโฟลเดอร์ (SKILL.md + references/scripts)
+agents/                           # subagent ที่ boss ใช้: coder / fixer / reviewer / scout
+rules/                            # กฎที่โหลดทุกเซสชัน (ต้องก๊อปมือ — plugin ไม่รองรับ rules)
+settings.json                     # ตัวอย่าง settings: lead = opus, effort = high, permission พื้นฐาน
+template/SKILL.md                 # เทมเพลตเริ่ม skill ใหม่
+THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ skill ที่รวมมาจากที่อื่น
 ```
 
-## เอาไปใช้เครื่องอื่น
+# Skills ใน repo นี้
 
-**แบบที่ 1 — เฉพาะโปรเจกต์:** ก๊อป `.claude/` ทั้งโฟลเดอร์ไปวางที่ root ของโปรเจกต์นั้น
-จบ ไม่ต้องติดตั้งอะไรเพิ่ม (commit เข้า git ได้เลย ทีมทั้งทีมได้ใช้เหมือนกัน)
+## ทีมงาน & workflow (เขียนเอง)
 
-**แบบที่ 2 — ทั้งเครื่อง:** ก๊อปของใน `.claude/` ไปไว้ที่ `~/.claude/` เอง
+| skill | ใช้ตอนไหน |
+|---|---|
+| [`boss`](./skills/boss) | playbook ของ lead: plan → dispatch ให้ `coder` ขนานกัน → verify ด้วยการรัน test เอง → integrate ใช้กับงานที่ทำหลายขั้นหรือแตะ 3 ไฟล์ขึ้นไป |
+| [`ship`](./skills/ship) | git flow ของทีม: branch `#N_slug` → commit ภาษาไทย → push → release `v.X.Y.Z` → เปิด PR dev → main ("อัพงาน", "ขึ้น PRD", "เปิด PR") |
+| [`qa`](./skills/qa) | ตรวจก่อนขึ้น PRD 4 เฟส: build readiness → bug audit → web security (OWASP + PDPA) → migrations แล้วตัดสิน GO / NO-GO |
+| [`next-static-pack`](./skills/next-static-pack) | build Next.js เป็น static export แก้ชื่อไฟล์ RSC บน Windows แล้วแพ็กพร้อม `.htaccess` (CSP/headers) ขึ้น Apache ที่ไม่มี Node |
+
+## วินัยวิศวกร (รวมจากภายนอก)
+
+| skill | ที่มา | ใช้ตอนไหน |
+|---|---|---|
+| [`karpathy-guidelines`](./skills/karpathy-guidelines) | multica-ai (MIT) | กันนิสัยเสียของ LLM: อย่าเดาแล้วลุย อย่าเขียนเกิน แก้เฉพาะจุด กำหนดเกณฑ์ "เสร็จ" ก่อนทำ |
+| [`debug-mantra`](./skills/debug-mantra) | 9arm | เริ่มไล่บั๊ก — บังคับลำดับ repro → fail path → falsify สมมติฐาน → ไล่ทวนทุกการทดลอง |
+| [`scrutinize`](./skills/scrutinize) | 9arm | รีวิว plan / PR / diff แบบคนนอก ถามก่อนว่าจำเป็นไหม มีทางง่ายกว่าไหม แล้วไล่ code path จริง |
+| [`post-mortem`](./skills/post-mortem) | 9arm | เขียนบันทึกบั๊กหลังแก้เสร็จ (root cause / fix / validation / หลุดมาได้ยังไง) |
+| [`management-talk`](./skills/management-talk) | 9arm | แปลงเรื่อง technical เป็นภาษาผู้บริหาร แยกทรงตามช่องทาง JIRA / Slack / standup / email |
+
+## ตัวอย่างจาก Anthropic (Apache 2.0)
+
+| skill | ใช้ตอนไหน |
+|---|---|
+| [`skill-creator`](./skills/skill-creator) | สร้าง skill ใหม่ ปรับ skill เดิม รัน eval วัดผล และจูน description ให้ trigger แม่นขึ้น |
+| [`mcp-builder`](./skills/mcp-builder) | สร้าง MCP server คุณภาพดี ทั้ง Python (FastMCP) และ Node/TypeScript (MCP SDK) |
+| [`webapp-testing`](./skills/webapp-testing) | ทดสอบเว็บแอปในเครื่องด้วย Playwright — ตรวจ UI, ถ่าย screenshot, ดู console log |
+| [`frontend-design`](./skills/frontend-design) | ทิศทางดีไซน์ UI ให้ดูตั้งใจ ไม่ใช่หน้าตา template เริ่มต้น |
+| [`doc-coauthoring`](./skills/doc-coauthoring) | เขียนเอกสาร / proposal / spec / decision doc แบบมีขั้นตอน ส่ง context → ปรับซ้ำ → ตรวจว่าคนอ่านเข้าใจ |
+
+## Agents ([`agents/`](./agents))
+
+subagent ที่ `boss` ส่งงานให้ — ทุกตัวเป็น Sonnet
+
+| agent | หน้าที่ |
+|---|---|
+| `coder` | เขียน/แก้โค้ดตามสเปกที่ lead ตัดสินใจแล้ว |
+| `fixer` | ดีบัก หาสาเหตุจริง แก้แบบน้อยที่สุด พร้อมพิสูจน์ |
+| `reviewer` | รีวิว diff หาบั๊ก (อ่านอย่างเดียว ไม่แก้) |
+| `scout` | สำรวจโค้ดเบส หา call site ก่อนวางแผน |
+
+## Rules ([`rules/`](./rules))
+
+กฎที่ถูกโหลดทุกเซสชันอัตโนมัติ ทำให้ไม่ต้องพิมพ์ `/skill` เอง
+
+| rule | ผล |
+|---|---|
+| `delegate-by-default.md` | งานหลายขั้นหรือแตะ 3 ไฟล์ขึ้นไปเข้าโหมด `boss` เอง งานเล็ก lead ทำเอง |
+| `karpathy-by-default.md` | ใช้ `karpathy-guidelines` ทุกครั้งที่เขียน/แก้/รีวิวโค้ด |
+| `qa-before-prd.md` | ก่อน build/แพ็ก/release ขึ้น production ถามหนึ่งครั้งว่าจะรัน `qa` ก่อนไหม |
+| `skills-explain-in-thai.md` | ทุก skill สื่อสารกับผู้ใช้เป็นภาษาไทย แม้ `SKILL.md` เป็นอังกฤษ |
+
+# ติดตั้ง
+
+## แบบที่ 1 — plugin marketplace (Claude Code)
+
+```
+/plugin marketplace add Kriangsak1416/ko-skills
+```
+
+แล้วเลือกลงเป็นชุด:
+
+```
+/plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack
+/plugin install 9arm-skills@ko-skills               # debug-mantra, scrutinize, post-mortem, management-talk
+/plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
+```
+
+plugin ไม่รองรับ `rules/` — ถ้าอยากได้พฤติกรรมอัตโนมัติ (แตกงานเอง, ถาม QA ก่อน build)
+ก๊อป rules ลงเครื่องเพิ่มตามแบบที่ 2
+
+## แบบที่ 2 — ก๊อปมือทั้งเครื่อง
 
 ```bash
+git clone https://github.com/Kriangsak1416/ko-skills.git
+cd ko-skills
 mkdir -p ~/.claude/agents ~/.claude/skills ~/.claude/rules
-cp -R .claude/agents/. ~/.claude/agents/
-cp -R .claude/skills/. ~/.claude/skills/
-cp    .claude/rules/*.md ~/.claude/rules/
+cp -R agents/. ~/.claude/agents/
+cp -R skills/. ~/.claude/skills/
+cp    rules/*.md ~/.claude/rules/
 ```
 
 ทับเฉพาะไฟล์ชื่อเดียวกัน agent/skill/rule อื่นที่มีอยู่ไม่หาย
-แล้วเช็คว่า `~/.claude/settings.json` มี `"model": "opus"` หรือยัง — boss mode
-คาดว่า lead เป็น opus ถ้ายังไม่ตรงตั้งด้วย `/model opus` จากนั้นรีสตาร์ต Claude Code
+แล้วเช็คว่า `~/.claude/settings.json` มี `"model": "opus"` หรือยัง — `boss` คาดว่า lead
+เป็น opus ถ้ายังไม่ตรงตั้งด้วย `/model opus` หรือเทียบกับ [`settings.json`](./settings.json)
+จากนั้นรีสตาร์ต Claude Code
 
-**ลง GitHub CLI + login** (ทั้ง 2 แบบ) — `/ship` ใช้ `gh` ตอนเปิด PR รันครั้งเดียวต่อเครื่อง:
+## แบบที่ 3 — เฉพาะโปรเจกต์
+
+ก๊อป `skills/`, `agents/`, `rules/` ไปไว้ใต้ `.claude/` ของโปรเจกต์นั้น
+(`.claude/skills/`, `.claude/agents/`, `.claude/rules/`) แล้ว commit เข้า git
+ทีมทั้งทีมได้ใช้เหมือนกันโดยไม่ต้องติดตั้งอะไร
+
+## GitHub CLI (สำหรับ `/ship`)
+
+`ship` ใช้ `gh` ตอนเปิด PR รันครั้งเดียวต่อเครื่อง:
 
 ```powershell
 winget install --id GitHub.cli --accept-source-agreements --accept-package-agreements
 gh auth login --hostname github.com --git-protocol https --web
 ```
 
-บรรทัดที่สองจะโชว์โค้ด `XXXX-XXXX` แล้วเปิดเบราว์เซอร์ให้เอาโค้ดไปกรอกที่
-github.com/login/device เสร็จแล้วเช็คด้วย `gh auth status` (เปิด PowerShell ใหม่
-ก่อนถ้ายังหา `gh` ไม่เจอหลัง winget ติดตั้งเสร็จ)
+ข้ามได้ — ถ้าตอน `/ship` ถึงขั้นเปิด PR แล้วยังไม่มี `gh` skill จะติดตั้งและพา login ให้เองตอนนั้น
 
-ข้ามขั้นนี้ก็ได้ — ถ้าตอน `/ship` ถึงขั้นเปิด PR แล้วยังไม่มี `gh` skill จะ
-ติดตั้งและพา login ให้เองตอนนั้น
-
-## วิธีสั่งงาน
+# วิธีใช้
 
 **สั่งงานตามปกติ ไม่ต้องพิมพ์อะไรพิเศษ**
 
@@ -77,130 +149,85 @@ github.com/login/device เสร็จแล้วเช็คด้วย `gh 
 เพิ่มระบบ login ด้วย JWT พร้อม test
 ```
 
-`rules/delegate-by-default.md` ถูกโหลดทุกเซสชันอัตโนมัติ (ทั้งแบบวางใน
-โปรเจกต์และแบบติดตั้งที่ `~/.claude/rules/`) งานที่ต้องทำหลายขั้นหรือแตะตั้งแต่
-3 ไฟล์ขึ้นไปจะเข้าโหมด lead + engineers เอง งานเล็กแค่ไม่กี่บรรทัด lead ทำเองเลย
-ไม่แตกงานให้เปลืองรอบ — และจะบอกคุณ 1 บรรทัดก่อนเริ่มว่าเลือกทางไหน
-
-พิมพ์ `/boss <งาน>` ได้อยู่ ถ้าอยากบังคับให้แตกงานแน่ ๆ หรือบอกว่า "ทำเองเลย
-ไม่ต้องใช้ subagent" ถ้าอยากปิดโหมดนี้เป็นครั้ง ๆ
+`rules/delegate-by-default.md` ทำให้งานที่ต้องทำหลายขั้นหรือแตะตั้งแต่ 3 ไฟล์ขึ้นไป
+เข้าโหมด lead + engineers เอง งานเล็กแค่ไม่กี่บรรทัด lead ทำเองเลย และจะบอกคุณ
+1 บรรทัดก่อนเริ่มว่าเลือกทางไหน พิมพ์ `/boss <งาน>` ถ้าอยากบังคับให้แตกงานแน่ ๆ
+หรือบอกว่า "ทำเองเลย ไม่ต้องใช้ subagent" ถ้าอยากปิดโหมดนี้เป็นครั้ง ๆ
 
 Opus จะ: สำรวจโค้ด → ตัดสินใจดีไซน์เอง → แตกเป็นงานย่อยที่**ไม่แก้ไฟล์ทับกัน** →
 ส่ง `coder` หลายตัวขนานกัน → **รัน test เองเพื่อตรวจ** (ไม่เชื่อรายงานของ engineer ลอย ๆ) →
 สั่งแก้ถ้าไม่ผ่าน → รวมงานและสรุปให้คุณ
 
-## อัพงานขึ้น git — `/ship`
+## `/ship` — อัพงานขึ้น git
 
-git flow ของทีมถูกฝังไว้ใน skill `ship` เรียกด้วย `/ship` หรือพิมพ์ธรรมดาว่า
-"commit ให้หน่อย" / "อัพงาน" / "ทำ release v.1.1.0" / "ขึ้น PRD" ก็ได้
-
-**งานปกติ (feature)**
+เรียกด้วย `/ship` หรือพิมพ์ธรรมดาว่า "commit ให้หน่อย" / "อัพงาน" / "ทำ release v.1.1.0" / "ขึ้น PRD"
 
 ```
-dev → แตก branch '#1_add_text_builder' → ทำงาน → commit (ภาษาไทย สั้น ๆ) → push
+งานปกติ   dev → แตก branch '#1_add_text_builder' → ทำงาน → commit (ภาษาไทย สั้น ๆ) → push
+ขึ้น PRD   dev → แตก branch 'v.1.0.0' → merge feature → รัน test →
+           finish release (merge main + merge กลับ dev + ลบ branch + tag) → เปิด PR dev → main
 ```
 
-**ตอนจะขึ้น PRD (release)**
-
-```
-dev → แตก branch 'v.1.0.0' → merge feature ที่จะอัพ → รัน test →
-finish release (merge เข้า main + merge กลับ dev + ลบ branch + tag) →
-เปิด PR dev → main ให้คนอื่น approve
-```
-
-PR ตั้ง title เป็น `v.1.0.0 - 2026-08-01` (version + วันที่) และ description
-ไล่ว่าอัพอะไรขึ้นไปบ้าง ทดสอบอะไรไปแล้ว มีผลกระทบอะไรต้องเตรียมก่อน deploy —
-ดูเทมเพลตที่ `skills/ship/references/pr-template.md`
-
-เปิด PR ผ่าน [GitHub CLI](https://cli.github.com) — ถ้าเครื่องยังไม่มี `gh` หรือ
-ยังไม่ login skill จะ `winget install` ให้แล้วรัน `gh auth login --web` เอง
-คุณแค่เอาโค้ดที่มันโชว์ไปกรอกในเบราว์เซอร์ ถ้าไม่อยากลง skill จะพิมพ์
-title + description + ลิงก์ compare ให้ไปกดเอง
+PR ตั้ง title เป็น `v.1.0.0 - 2026-08-01` และ description ไล่ว่าอัพอะไร ทดสอบอะไร
+มีผลกระทบอะไร — เทมเพลตอยู่ที่ [`skills/ship/references/pr-template.md`](./skills/ship/references/pr-template.md)
 
 สิ่งที่ skill จะไม่ทำเด็ดขาด: force push, rewrite history ที่ push ไปแล้ว,
 merge PR ของตัวเอง, เขียนใน PR ว่าทดสอบผ่านทั้งที่ไม่ได้รัน
 
 ## `/qa` — ตรวจก่อนขึ้น PRD
 
-Release engineer audit ก่อนเอาของขึ้น production 4 เฟส
-
 1. **Build readiness** — รัน build/typecheck/lint จริง, env ครบไหม, dev-only code หลุดไหม
 2. **Bug audit** — logic / error handling / DB / concurrency พร้อม severity และ `file:line`
-3. **Web security audit** — 10 หมวดตาม OWASP Top 10 (2021) + API Security Top 10 (2023):
-   secret ที่ติดไปกับ bundle, auth/session, **IDOR** (เปลี่ยนเลขใน URL แล้วเห็นของคนอื่น),
-   injection/XSS, CSRF/CORS/SSRF, headers+CSP, upload/rate limit, supply chain,
-   **ข้อมูลผู้ป่วย/PDPA**, endpoint ที่ไม่ควรเปิด
-4. **Migrations must-run-immediately** — fresh + production-like, rollback, MariaDB 5.5 (utf8mb4 index 191)
+3. **Web security audit** — 10 หมวดตาม OWASP Top 10 + API Security Top 10: secret ใน bundle,
+   auth/session, **IDOR**, injection/XSS, CSRF/CORS/SSRF, headers+CSP, upload/rate limit,
+   supply chain, **ข้อมูลผู้ป่วย/PDPA**, endpoint ที่ไม่ควรเปิด
+4. **Migrations** — fresh + production-like, rollback, MariaDB 5.5 (utf8mb4 index 191)
 
-จบด้วยตาราง severity, รายการ blocker, migration runbook และคำตัดสิน
-**GO / NO-GO** — มี blocker แม้ข้อเดียว = NO-GO แล้ว**หยุดรออนุมัติก่อนแก้**
+จบด้วยตาราง severity, รายการ blocker, migration runbook และ **GO / NO-GO** —
+มี blocker แม้ข้อเดียว = NO-GO แล้ว**หยุดรออนุมัติก่อนแก้**
 
-รันเองด้วย `/qa` ก็ได้ แต่ไม่ต้องจำ — `rules/qa-before-prd.md` ทำให้ทุกครั้งที่สั่ง
-build/แพ็ก/release ขึ้น production (รวมถึง `/ship` Flow B กับ `npm run pack` ของ
-`next-static-pack`) ถามก่อนหนึ่งครั้งว่าจะรัน QA ก่อนไหม
-
-คำว่า "เลย" ไม่ข้ามคำถามนี้ — "อัพขึ้น PRD เลย" แปลว่าไม่ต้องขออนุมัติเป็นขั้น ๆ
-ไม่ได้แปลว่าไม่ต้องทดสอบ สั่ง "ไม่ต้อง QA" หรือ "build เลย" ถึงจะข้าม
-
-## `karpathy-guidelines` — กันนิสัยเสียของ LLM
-
-Skill จากภายนอกที่รวมไว้ด้วย: 4 หลักการสั้น ๆ ที่ตัดปัญหาที่โมเดลชอบทำ —
-เดาแทนเราแล้วลุยต่อ, เขียนเกินความจำเป็น, ไปแก้โค้ดข้าง ๆ ที่ไม่เกี่ยว,
-และทำงานโดยไม่มีเกณฑ์ว่า "เสร็จ" คืออะไร
-
-เรียกเองด้วย `/karpathy-guidelines` หรือปล่อยให้ถูกเรียกอัตโนมัติตอนเขียน/รีวิว/
-refactor โค้ด — ใช้คู่กับ `boss` ได้ดี เพราะ engineer ที่รับใบสั่งงานจะได้ไม่
-"ปรับปรุงเพิ่มให้" นอกสโคป
-
-ที่มา: [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)
-โดย forrestchang (MIT) — ดัดแปลงจาก
-[โพสต์ของ Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876)
-ไฟล์ถูกคัดลอกมาตามต้นฉบับ ไม่ได้แก้เนื้อหา
+`rules/qa-before-prd.md` ทำให้ทุกครั้งที่สั่ง build/แพ็ก/release ขึ้น production ถามก่อน
+หนึ่งครั้งว่าจะรัน QA ไหม — คำว่า "เลย" ไม่ข้ามคำถามนี้ ต้องสั่ง "ไม่ต้อง QA" หรือ "build เลย"
 
 ## `next-static-pack` — build เว็บ Next ขึ้น Apache
 
-เว็บ Next ของเรารันบน Apache ที่ **ไม่มี Node** ทุกตัวจึงต้อง build เป็น static
-export แล้ววางทั้งโฟลเดอร์ใน DocumentRoot ใต้ path ย่อย skill นี้เก็บสูตรทั้งชุด
-ที่ใช้จริงกับ `icu refer` และ `ICU Dashboard` มาแล้ว
+เว็บ Next รันบน Apache ที่ **ไม่มี Node** จึงต้อง build เป็น static export แล้ววางใต้ path ย่อย
 
 ```
 npm run pack   =   next build  →  flatten-segments  →  pack-deploy
 ```
 
-- **`flatten-segments.mjs`** — `next build` บน Windows เขียนชื่อไฟล์ prefetch
-  (`__next.*.txt`) เป็นโฟลเดอร์ซ้อนแทนไฟล์แบน ทำให้ชี้เมนูแล้ว prefetch ได้ 404
-  สคริปต์ยุบกลับให้ถูก (บน Linux ไม่มีปัญหานี้ มันจะจบเงียบ ๆ)
-- **`pack-deploy.mjs`** — ก๊อป `out/` ไปปลายทางนอกโปรเจกต์ แล้วเขียน `.htaccess`
-  (RewriteBase, security headers, **CSP ที่ล็อก `connect-src` ไว้ที่ origin ของ
-  `NEXT_PUBLIC_API_URL` เจ้าเดียว**) กับ `README.txt` วิธีวางให้ทีมเซิร์ฟเวอร์
+- **`flatten-segments.mjs`** — `next build` บน Windows เขียนชื่อไฟล์ prefetch (`__next.*.txt`)
+  เป็นโฟลเดอร์ซ้อน ทำให้ prefetch 404 สคริปต์ยุบกลับให้ถูก
+- **`pack-deploy.mjs`** — ก๊อป `out/` ไปปลายทาง แล้วเขียน `.htaccess` (RewriteBase, security
+  headers, **CSP ที่ล็อก `connect-src` ไว้ที่ origin ของ `NEXT_PUBLIC_API_URL`**) กับ `README.txt`
 
-basePath ถูกอ่านจาก `src/lib/basePath.ts` ที่เป็นแหล่งความจริงที่เดียว ไม่ได้
-hardcode ไว้ในสคริปต์ — เปลี่ยน path แล้ว `RewriteBase` ตามให้เอง
+basePath อ่านจาก `src/lib/basePath.ts` ที่เดียว เปลี่ยน path แล้ว `RewriteBase` ตามให้เอง
 
-ใน SKILL.md มี checklist ก่อนบอกว่าเสร็จ (ต้องไม่เหลือโฟลเดอร์ `__next.*`,
-CSP ต้องตรงกับที่แอปยิงจริง) และตารางว่าแอปใช้อะไรแล้วต้องเปิด CSP ตัวไหน
+# สร้าง skill ใหม่
 
-## skills ของ 9arm
+skill คือโฟลเดอร์ที่มี `SKILL.md` มี YAML frontmatter แล้วตามด้วยคำสั่ง
+เริ่มจาก [`template/SKILL.md`](./template/SKILL.md) หรือให้ `/skill-creator` ช่วยร่างและรัน eval
 
-รวมมาจาก [thananon/9arm-skills](https://github.com/thananon/9arm-skills) เอามา 4 ตัว
-(ก๊อปตามต้นฉบับ)
+```markdown
+---
+name: my-skill-name
+description: skill นี้ทำอะไร และควรถูกเรียกตอนไหน (ใส่คำที่ผู้ใช้มักพิมพ์ด้วย)
+---
 
-| skill | ใช้ตอนไหน |
-|---|---|
-| `/debug-mantra` | เริ่มไล่บั๊ก — บังคับลำดับ repro ให้ได้ก่อน → หา fail path → พยายามล้มสมมติฐานตัวเอง → ไล่ทวนทุกการทดลอง |
-| `/scrutinize` | รีวิว plan / PR / diff แบบคนนอก ถามก่อนว่า "จำเป็นต้องทำไหม มีทางที่ง่ายกว่าไหม" แล้วค่อยไล่ code path จริง ห้ามตอบ LGTM ลอย ๆ |
-| `/post-mortem` | บั๊กแก้เสร็จและ validate แล้ว เขียนบันทึกให้คนอื่น (ถ้ายังไม่มี repro / ยังไม่รู้ root cause มันจะปฏิเสธไม่เขียนให้) |
-| `/management-talk` | แปลงเรื่อง technical เป็นภาษาผู้บริหาร แยกทรงตามช่องทาง (JIRA / Slack / standup / email) |
+# My Skill Name
 
-ต้นฉบับมีอีก 2 ตัวที่ไม่ได้เอามา — `qwen-agent` (โยนงานจำเจให้ qwen ผ่านคำสั่ง
-`claude-9arm` ซึ่งเป็น gateway ส่วนตัวของเจ้าของ repo) และ `qwenchance`
-(กันวนลูป/เฝ้า context) การโยนงานให้โมเดลถูกกว่าทำอยู่แล้วผ่าน `/boss` + agent
-`coder` ที่เป็น sonnet เลยไม่ต้องมีอีกตัว
+[คำสั่งที่ Claude จะทำตามเมื่อ skill นี้ทำงาน]
+```
 
-แก้จากต้นฉบับจุดเดียว: ลิงก์ใน `post-mortem` ที่ชี้ไป `../../productivity/management-talk/`
-เปลี่ยนเป็น `../management-talk/` เพราะที่นี่วาง skill เรียงแบนไม่ได้แยก bucket
+frontmatter บังคับแค่ 2 ฟิลด์:
+- `name` — ตัวพิมพ์เล็ก คั่นด้วย `-` ต้องตรงกับชื่อโฟลเดอร์
+- `description` — ทำอะไร + ใช้ตอนไหน (ส่วนนี้คือสิ่งที่ Claude ใช้ตัดสินว่าจะโหลดหรือไม่)
 
-## หลักการที่ฝังไว้ในชุดนี้
+ถ้า skill ต้องคุยกับผู้ใช้ `rules/skills-explain-in-thai.md` จะบังคับให้ตอบเป็นภาษาไทย
+อยู่แล้ว เขียน `SKILL.md` เป็นอังกฤษได้ตามสะดวก
+
+# หลักการที่ฝังไว้ในชุดนี้
 
 - **lead ตัดสินใจ engineer ลงมือ** — ดีไซน์ สัญญา API ชื่อ โครงสร้าง เป็นงานของ Opus
   เท่านั้น engineer ห้ามคิดเอง ถ้าใบสั่งงานกำกวมเรื่องใหญ่ให้หยุดแล้วรายงานกลับ
@@ -212,3 +239,8 @@ CSP ต้องตรงกับที่แอปยิงจริง) แ�
 - **งานขนานห้ามแตะไฟล์เดียวกัน** — เขียนทับกันพัง เป็นความรับผิดชอบของ lead ที่จะแยกไฟล์
 - **ไม่ commit / push / deploy** ถ้าผู้ใช้ไม่ได้สั่ง
 - **งานเล็ก lead ทำเอง** — แก้ 2-3 บรรทัดไม่คุ้มค่าเขียนใบสั่งงาน
+
+# License
+
+skill ที่เขียนเองใน repo นี้ใช้ได้อิสระ skill ที่รวมมาจากที่อื่นอยู่ภายใต้ license ของต้นทาง —
+ดู [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)

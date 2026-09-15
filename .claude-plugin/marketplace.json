@@ -1,0 +1,57 @@
+{
+  "name": "ko-skills",
+  "owner": {
+    "name": "Kriangsak Chansong",
+    "email": "k.chansong1416@gmail.com"
+  },
+  "metadata": {
+    "description": "ชุด skills + agents ของ ko สำหรับ Claude Code — lead/engineer team, git flow, QA ก่อนขึ้น PRD, Next static pack และ skills ตัวอย่างจาก Anthropic",
+    "version": "2.0.0"
+  },
+  "plugins": [
+    {
+      "name": "team-skills",
+      "description": "ทีม lead + engineers: boss (Opus วางแผน/แตกงาน, Sonnet เขียนโค้ด) พร้อม agents coder/fixer/reviewer/scout, karpathy-guidelines, ship (git flow ของทีม), qa (ตรวจก่อนขึ้น PRD) และ next-static-pack (Next.js → Apache)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/boss",
+        "./skills/karpathy-guidelines",
+        "./skills/ship",
+        "./skills/qa",
+        "./skills/next-static-pack"
+      ],
+      "agents": [
+        "./agents/coder.md",
+        "./agents/fixer.md",
+        "./agents/reviewer.md",
+        "./agents/scout.md"
+      ]
+    },
+    {
+      "name": "9arm-skills",
+      "description": "วินัยวิศวกรจาก thananon/9arm-skills: debug-mantra, scrutinize, post-mortem, management-talk",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/debug-mantra",
+        "./skills/scrutinize",
+        "./skills/post-mortem",
+        "./skills/management-talk"
+      ]
+    },
+    {
+      "name": "anthropic-example-skills",
+      "description": "skills ตัวอย่างจาก anthropics/skills (Apache 2.0): doc-coauthoring, frontend-design, mcp-builder, skill-creator, webapp-testing",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/doc-coauthoring",
+        "./skills/frontend-design",
+        "./skills/mcp-builder",
+        "./skills/skill-creator",
+        "./skills/webapp-testing"
+      ]
+    }
+  ]
+}
