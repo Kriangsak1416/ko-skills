@@ -17,6 +17,7 @@ authorization to spawn subagents for this task — do not ask again per task.
 | `coder` | sonnet | Implementing a concrete, decided spec |
 | `fixer` | sonnet | A failure with an unknown cause |
 | `reviewer` | sonnet | Auditing a finished change before you accept it |
+| `ollama-worker` (skill, not an agent) | local Ollama model, free | The smallest web chores — one HTML/CSS/Tailwind fragment, one short function, mock data. Load the skill; it asks once per machine whether to use it, and it cannot see the repo. |
 
 Spawn with the Agent tool, `subagent_type` set to the name above. Every engineer
 starts cold with zero context from this conversation — the brief you write is

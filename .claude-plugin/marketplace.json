@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "team-skills",
-      "description": "ทีม lead + engineers: boss (Opus วางแผน/แตกงาน, Sonnet เขียนโค้ด) พร้อม agents coder/fixer/reviewer/scout, karpathy-guidelines, ship (git flow ของทีม), qa (ตรวจก่อนขึ้น PRD) และ next-static-pack (Next.js → Apache)",
+      "description": "ทีม lead + engineers: boss (Opus วางแผน/แตกงาน, Sonnet เขียนโค้ด) พร้อม agents coder/fixer/reviewer/scout, karpathy-guidelines, ship (git flow ของทีม), qa (ตรวจก่อนขึ้น PRD), next-static-pack (Next.js → Apache) และ ollama-worker (โยนงานเว็บชิ้นเล็กให้ qwen บน Ollama ทำฟรี)",
       "source": "./",
       "strict": false,
       "skills": [
@@ -19,7 +19,8 @@
         "./skills/karpathy-guidelines",
         "./skills/ship",
         "./skills/qa",
-        "./skills/next-static-pack"
+        "./skills/next-static-pack",
+        "./skills/ollama-worker"
       ],
       "agents": [
         "./agents/coder.md",

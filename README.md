@@ -46,6 +46,7 @@ THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ s
 | [`ship`](./skills/ship) | git flow ของทีม: branch `#N_slug` → commit ภาษาไทย → push → release `v.X.Y.Z` → เปิด PR dev → main ("อัพงาน", "ขึ้น PRD", "เปิด PR") |
 | [`qa`](./skills/qa) | ตรวจก่อนขึ้น PRD 4 เฟส: build readiness → bug audit → web security (OWASP + PDPA) → migrations แล้วตัดสิน GO / NO-GO |
 | [`next-static-pack`](./skills/next-static-pack) | build Next.js เป็น static export แก้ชื่อไฟล์ RSC บน Windows แล้วแพ็กพร้อม `.htaccess` (CSP/headers) ขึ้น Apache ที่ไม่มี Node |
+| [`ollama-worker`](./skills/ollama-worker) | โยนงานเว็บชิ้นเล็ก ๆ (HTML fragment, CSS class, Tailwind component, ฟังก์ชันสั้น ๆ, mock data) ให้โมเดล local บน Ollama ทำฟรี Claude เป็นคนเขียน brief เรียก API แล้วตรวจผลเอง ใช้ครั้งแรกในเครื่องจะถามก่อนว่าจะใช้ไหม / host / model แล้วจำไว้ใน `~/.claude/ollama-worker.json` ("ให้ ollama ทำ", "ใช้ qwen", "ประหยัด token") |
 
 ## วินัยวิศวกร (รวมจากภายนอก)
 
@@ -100,7 +101,7 @@ subagent ที่ `boss` ส่งงานให้ — ทุกตัวเ�
 แล้วเลือกลงเป็นชุด:
 
 ```
-/plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack
+/plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack, ollama-worker
 /plugin install 9arm-skills@ko-skills               # debug-mantra, scrutinize, post-mortem, management-talk
 /plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
 ```
