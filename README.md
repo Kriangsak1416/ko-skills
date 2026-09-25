@@ -32,6 +32,7 @@ skills/                           # skill ละโฟลเดอร์ (SKILL.
 agents/                           # subagent ที่ boss ใช้: coder / fixer / reviewer / scout
 rules/                            # กฎที่โหลดทุกเซสชัน (ต้องก๊อปมือ — plugin ไม่รองรับ rules)
 settings.json                     # ตัวอย่าง settings: lead = opus, effort = high, permission พื้นฐาน
+scripts/                          # check-updates.sh (hook เช็คของใหม่ตอนเปิดเซสชัน) + update-skills.sh (pull แล้วก๊อปทับ)
 template/SKILL.md                 # เทมเพลตเริ่ม skill ใหม่
 THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ skill ที่รวมมาจากที่อื่น
 ```
@@ -47,6 +48,7 @@ THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ s
 | [`qa`](./skills/qa) | ตรวจก่อนขึ้น PRD 4 เฟส: build readiness → bug audit → web security (OWASP + PDPA) → migrations แล้วตัดสิน GO / NO-GO |
 | [`next-static-pack`](./skills/next-static-pack) | build Next.js เป็น static export แก้ชื่อไฟล์ RSC บน Windows แล้วแพ็กพร้อม `.htaccess` (CSP/headers) ขึ้น Apache ที่ไม่มี Node |
 | [`ollama-worker`](./skills/ollama-worker) | โยนงานเว็บชิ้นเล็ก ๆ (HTML fragment, CSS class, Tailwind component, ฟังก์ชันสั้น ๆ, mock data) ให้โมเดล local บน Ollama ทำฟรี Claude เป็นคนเขียน brief เรียก API แล้วตรวจผลเอง ใช้ครั้งแรกในเครื่องจะถามก่อนว่าจะใช้ไหม / host / model แล้วจำไว้ใน `~/.claude/ollama-worker.json` ("ให้ ollama ทำ", "ใช้ qwen", "ประหยัด token") |
+| [`update-skill-ko`](./skills/update-skill-ko) | เทียบ version หลักของ skills/agents/rules ที่ติดตั้งใน `~/.claude` กับ repo บน GitHub ถ้าไม่ตรงจะถามก่อนแล้วอัปเดตให้ ("update-skill-ko", "อัปเดต skill") |
 
 ## วินัยวิศวกร (รวมจากภายนอก)
 
@@ -101,7 +103,7 @@ subagent ที่ `boss` ส่งงานให้ — ทุกตัวเ�
 แล้วเลือกลงเป็นชุด:
 
 ```
-/plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack, ollama-worker
+/plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack, ollama-worker, update-skill-ko
 /plugin install 9arm-skills@ko-skills               # debug-mantra, scrutinize, post-mortem, management-talk
 /plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
 ```
@@ -124,6 +126,43 @@ cp    rules/*.md ~/.claude/rules/
 แล้วเช็คว่า `~/.claude/settings.json` มี `"model": "opus"` หรือยัง — `boss` คาดว่า lead
 เป็น opus ถ้ายังไม่ตรงตั้งด้วย `/model opus` หรือเทียบกับ [`settings.json`](./settings.json)
 จากนั้นรีสตาร์ต Claude Code
+
+## อัปเดต — ให้ Claude ถามเองเมื่อมีของใหม่ (สำหรับแบบที่ 2)
+
+เพิ่ม hook ใน `~/.claude/settings.json` ชี้ไปที่ clone ของ repo นี้ (เปลี่ยน path ให้ตรงเครื่อง):
+
+```json
+"hooks": {
+  "SessionStart": [
+    {
+      "matcher": "startup",
+      "hooks": [
+        { "type": "command", "command": "bash \"D:/path/to/ko-skills/scripts/check-updates.sh\"", "timeout": 30 }
+      ]
+    }
+  ]
+}
+```
+
+ทุกครั้งที่เปิด Claude Code `check-updates.sh` จะ `git fetch` แล้วเทียบ `skills/` `agents/` `rules/`
+ใน repo กับที่ติดตั้งใน `~/.claude` ทีละไฟล์ ถ้ามีอะไรต่างกัน Claude จะบอกว่า skill ไหนเปลี่ยน
+แล้วถามหนึ่งครั้งว่าจะอัปเดตไหม — ตอบว่าอัปเดตแล้ว Claude จะรัน `update-skills.sh`
+(`git pull --ff-only` + ก๊อปทับเหมือนขั้นติดตั้ง) ตอบว่าไม่ก็ไม่ถามซ้ำจนกว่าจะเปิดเซสชันใหม่
+ไม่มีอะไรต่างกันหรือออฟไลน์ก็เงียบ ๆ ไม่รบกวน
+
+อัปเดตเองโดยไม่รอถามก็ได้: `bash scripts/update-skills.sh`
+
+แบบที่ 1 (plugin) ไม่ต้องใช้ตัวนี้ — อัปเดตผ่าน `/plugin` ได้เลย
+
+## เช็ค version กับ GitHub — skill `update-skill-ko`
+
+พิมพ์ `update-skill-ko` ในเซสชันไหนก็ได้ ไม่ต้องมี clone ของ repo ในเครื่อง Claude จะเทียบ
+version หลัก (`metadata.version` ใน [`.claude-plugin/marketplace.json`](./.claude-plugin/marketplace.json))
+บน GitHub กับที่บันทึกไว้ใน `~/.claude/ko-skills.version` ถ้าไม่ตรงกันจะถามก่อน แล้วค่อย clone
+ของล่าสุดมาก๊อปทับให้
+
+**คนดูแล repo:** แก้อะไรใน `skills/` `agents/` `rules/` แล้วต้อง bump `metadata.version` ทุกครั้ง
+ไม่อย่างนั้นเครื่องอื่นเช็คไม่เจอว่ามีของใหม่
 
 ## แบบที่ 3 — เฉพาะโปรเจกต์
 
