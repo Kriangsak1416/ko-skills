@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "ชุด skills + agents ของ ko สำหรับ Claude Code — lead/engineer team, git flow, QA ก่อนขึ้น PRD, Next static pack และ skills ตัวอย่างจาก Anthropic",
-    "version": "2.1.0"
+    "version": "2.2.0"
   },
   "plugins": [
     {

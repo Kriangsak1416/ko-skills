@@ -1,6 +1,6 @@
 ---
 name: ship
-description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย".
+description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first, and before any commit that would land on dev/develop/main.
 ---
 
 # Ship — feature branch → release → PR
@@ -58,6 +58,23 @@ from a retired convention; do not copy it.
 
 ### 1. Branch off dev
 
+This step runs **before any code is written** — not when the user asks to
+commit. Being asked to build a feature or fix a bug is the trigger; the user
+will not say "แตก branch". Check where you are first:
+
+```
+git rev-parse --abbrev-ref HEAD
+git status --porcelain
+```
+
+- On a feature branch for this task → skip to step 2.
+- On dev/develop/main with a clean tree → run the commands below.
+- On dev/develop with uncommitted changes that are **this task's work** (the
+  code was started before branching) → `git switch -c '<branch>'` right where
+  you are; the changes carry over. Do not stash, reset, or pull first. Say that
+  the branch starts from local dev, which was not pulled.
+- Uncommitted changes that are **not** this task's work → stop and report.
+
 ```
 git fetch origin
 git switch dev
@@ -80,6 +97,17 @@ delegate-by-default rule applies and the `boss` skill runs it. This skill owns
 the git side only.
 
 ### 3. Commit
+
+Check the branch before staging anything:
+
+```
+git rev-parse --abbrev-ref HEAD
+```
+
+If it prints `dev`, `develop`, `main` or `master`, **do not commit here.** Cut
+the feature branch first as in step 1 (`git switch -c '#<n>_<slug>'` — the
+uncommitted changes come along), then commit on it. Commits reach dev only
+through Flow B's release merge, never directly.
 
 ```
 git status --porcelain
@@ -271,6 +299,8 @@ approves and merges.
 
 ## Standing rules
 
+- **Never commit directly to dev/develop/main/master.** Feature work lives on a
+  feature branch; dev and main change only through Flow B's merges.
 - **Never force-push and never rewrite published history.** No `--force`, no
   `rebase` on a branch that is already on origin, no amending a pushed commit.
 - **Never merge or approve the PR yourself.**
