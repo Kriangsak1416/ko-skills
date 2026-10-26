@@ -89,7 +89,7 @@ subagent ที่ `boss` ส่งงานให้ — ทุกตัวเ�
 |---|---|
 | `delegate-by-default.md` | งานหลายขั้นหรือแตะ 3 ไฟล์ขึ้นไปเข้าโหมด `boss` เอง งานเล็ก lead ทำเอง |
 | `karpathy-by-default.md` | ใช้ `karpathy-guidelines` ทุกครั้งที่เขียน/แก้/รีวิวโค้ด |
-| `branch-before-work.md` | ก่อนแก้โค้ดและก่อน commit เช็ค branch ถ้าอยู่บน dev/develop/main จะแตก feature branch ผ่าน `ship` ก่อนเสมอ |
+| `branch-before-work.md` | ก่อนแก้โค้ดและก่อน commit เช็ค branch — ถ้ามี feature branch ที่ยังไม่ขึ้น PRD ใช้ branch เดิมต่อ ถ้าขึ้น PRD ไปแล้วหรือยังไม่มี จะแตกใหม่ผ่าน `ship` |
 | `qa-before-prd.md` | ก่อน build/แพ็ก/release ขึ้น production ถามหนึ่งครั้งว่าจะรัน `qa` ก่อนไหม |
 | `skills-explain-in-thai.md` | ทุก skill สื่อสารกับผู้ใช้เป็นภาษาไทย แม้ `SKILL.md` เป็นอังกฤษ |
 
@@ -210,7 +210,8 @@ Opus จะ: สำรวจโค้ด → ตัดสินใจดีไ�
 ```
 
 ไม่ต้องสั่งแตก branch เอง — `rules/branch-before-work.md` ทำให้ทุกครั้งที่สั่งงานแก้โค้ด
-ขณะอยู่บน dev/develop/main Claude จะแตก `#N_slug` ก่อนเริ่มงาน และไม่ commit ลง dev/main ตรง ๆ
+ถ้ามี `#N_slug` ที่ยังไม่ได้ขึ้น PRD อยู่แล้ว งานใหม่จะต่อบน branch เดิม ถ้าขึ้น PRD ไปแล้ว
+(หรือยังไม่มี) Claude จะแตก branch ใหม่จาก dev ก่อนเริ่มงาน และไม่ commit ลง dev/main ตรง ๆ
 
 PR ตั้ง title เป็น `v.1.0.0 - 2026-08-01` และ description ไล่ว่าอัพอะไร ทดสอบอะไร
 มีผลกระทบอะไร — เทมเพลตอยู่ที่ [`skills/ship/references/pr-template.md`](./skills/ship/references/pr-template.md)

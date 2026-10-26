@@ -8,13 +8,29 @@ refactor, even a one-line change — check where HEAD is:
 git rev-parse --abbrev-ref HEAD
 ```
 
+**One feature branch carries every task until it goes to PRD.** A new request
+does not get a new branch while the current one is still unreleased; a branch
+that has already shipped is never reused. Features reach dev only through
+Flow B's release merge, so "already on dev" means "already in PRD". After
+`git fetch origin`, a feature branch is **unreleased** when any of these holds:
+
+- it has commits dev does not: `git rev-list --count 'origin/dev..<branch>'` > 0
+- it is the current branch and has uncommitted changes
+- its tip is exactly `origin/dev` — cut, nothing done on it yet
+
+Then:
+
+- **On a feature branch (`#<n>_<slug>` / `feature/#<n>_<slug>`) that is
+  unreleased:** keep working on it — even when the new request is a different
+  task. Do not ask.
+- **On a feature branch that is already released:** invoke `Skill(ship)` and
+  run Flow A step 1 to cut a fresh branch off dev.
 - **On `dev`, `develop`, `main`, `master`, or a release branch `v.X.Y.Z`:**
-  invoke `Skill(ship)` and run Flow A step 1 to cut a feature branch first.
-  Only then start the work.
-- **On a feature branch (`#<n>_<slug>` / `feature/#<n>_<slug>`) for this same
-  task:** keep working on it.
-- **On a feature branch for a different task:** ask once whether to continue
-  there or cut a fresh branch off dev.
+  look for an unreleased local feature branch —
+  `git branch --no-merged origin/dev --format='%(refname:short)'`, keeping only
+  names with `#`. One found → `git switch '<branch>'` and work there. Several →
+  ask once which. None → invoke `Skill(ship)` and run Flow A step 1 to cut a
+  feature branch. Only then start the work.
 
 This runs **before** `boss` or any delegation: the lead cuts the branch, the
 subagents work inside it. State the branch in one line next to the

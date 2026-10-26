@@ -1,6 +1,6 @@
 ---
 name: ship
-description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first, and before any commit that would land on dev/develop/main.
+description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first — or reuse the existing one if it has not gone to PRD yet — and before any commit that would land on dev/develop/main.
 ---
 
 # Ship — feature branch → release → PR
@@ -67,12 +67,28 @@ git rev-parse --abbrev-ref HEAD
 git status --porcelain
 ```
 
-- On a feature branch for this task → skip to step 2.
-- On dev/develop/main with a clean tree → run the commands below.
+**Reuse the branch until it ships.** A feature branch takes every new task
+until it goes to PRD; only after its release does the next task get a fresh
+branch. Run `git fetch origin`, then a feature branch counts as **unreleased**
+when it has commits dev does not (a non-zero
+`git rev-list --count 'origin/dev..<branch>'`), has uncommitted changes, or
+sits exactly on `origin/dev` (just cut).
+Features reach dev only through Flow B, so a branch already on dev is in PRD.
+
+- On a feature branch that is unreleased → skip to step 2, even if the new
+  request is a different task. Say in one line that the work joins this branch.
+- On a feature branch that is already released → switch to dev and run the
+  commands below for a fresh branch.
+- On dev/develop/main → first list unreleased local feature branches:
+  `git branch --no-merged origin/dev --format='%(refname:short)'`, keeping only
+  names with `#`. One → `git switch '<branch>'` and skip to step 2. Several →
+  ask once which. None → run the commands below.
 - On dev/develop with uncommitted changes that are **this task's work** (the
-  code was started before branching) → `git switch -c '<branch>'` right where
-  you are; the changes carry over. Do not stash, reset, or pull first. Say that
-  the branch starts from local dev, which was not pulled.
+  code was started before branching) → switch to the unreleased branch if there
+  is one (`git switch '<branch>'`; if git refuses over a conflict, stop and
+  report), otherwise `git switch -c '<branch>'` right where you are. The changes
+  carry over. Do not stash, reset, or pull first. Say that the branch starts
+  from local dev, which was not pulled.
 - Uncommitted changes that are **not** this task's work → stop and report.
 
 ```
@@ -122,7 +138,8 @@ git commit --cleanup=whitespace -m '#1 เพิ่มตัวสร้าง�
 - Check for secrets before staging: `.env`, keys, tokens, credentials, dumps
 - Never write "ทดสอบผ่าน" in a message unless you ran the tests and saw them pass
 
-One feature per branch. Several commits on the branch are fine.
+A branch collects every task until it goes to PRD — commit each task on its
+own, each subject starting with the branch's `#<n>`.
 
 ### 4. Push
 
