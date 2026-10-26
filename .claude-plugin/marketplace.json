@@ -6,12 +6,12 @@
   },
   "metadata": {
     "description": "ชุด skills + agents ของ ko สำหรับ Claude Code — lead/engineer team, git flow, QA ก่อนขึ้น PRD, Next static pack และ skills ตัวอย่างจาก Anthropic",
-    "version": "2.3.0"
+    "version": "2.4.0"
   },
   "plugins": [
     {
       "name": "team-skills",
-      "description": "ทีม lead + engineers: boss (Opus วางแผน/แตกงาน, Sonnet เขียนโค้ด) พร้อม agents coder/fixer/reviewer/scout, karpathy-guidelines, ship (git flow ของทีม), qa (ตรวจก่อนขึ้น PRD), next-static-pack (Next.js → Apache) และ ollama-worker (โยนงานเว็บชิ้นเล็กให้ qwen บน Ollama ทำฟรี)",
+      "description": "ทีม lead + engineers: boss (Opus วางแผน/แตกงาน, Sonnet เขียนโค้ด) พร้อม agents coder/fixer/reviewer/scout, karpathy-guidelines, ship (git flow ของทีม), qa (ตรวจก่อนขึ้น PRD), next-static-pack (Next.js → Apache) ollama-worker (โยนงานเว็บชิ้นเล็กให้ qwen บน Ollama ทำฟรี) และ thai-memo (ร่างบันทึกข้อความราชการเป็น .docx)",
       "source": "./",
       "strict": false,
       "skills": [
@@ -21,6 +21,7 @@
         "./skills/qa",
         "./skills/next-static-pack",
         "./skills/ollama-worker",
+        "./skills/thai-memo",
         "./skills/update-skill-ko"
       ],
       "agents": [

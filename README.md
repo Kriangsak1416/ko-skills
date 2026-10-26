@@ -48,6 +48,7 @@ THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ s
 | [`qa`](./skills/qa) | ตรวจก่อนขึ้น PRD 4 เฟส: build readiness → bug audit → web security (OWASP + PDPA) → migrations แล้วตัดสิน GO / NO-GO |
 | [`next-static-pack`](./skills/next-static-pack) | build Next.js เป็น static export แก้ชื่อไฟล์ RSC บน Windows แล้วแพ็กพร้อม `.htaccess` (CSP/headers) ขึ้น Apache ที่ไม่มี Node |
 | [`ollama-worker`](./skills/ollama-worker) | โยนงานเว็บชิ้นเล็ก ๆ (HTML fragment, CSS class, Tailwind component, ฟังก์ชันสั้น ๆ, mock data) ให้โมเดล local บน Ollama ทำฟรี Claude เป็นคนเขียน brief เรียก API แล้วตรวจผลเอง ใช้ครั้งแรกในเครื่องจะถามก่อนว่าจะใช้ไหม / host / model แล้วจำไว้ใน `~/.claude/ollama-worker.json` ("ให้ ollama ทำ", "ใช้ qwen", "ประหยัด token") |
+| [`thai-memo`](./skills/thai-memo) | ร่างบันทึกข้อความราชการเป็น .docx ตามแบบสารบรรณ (ตราครุฑ, TH SarabunIT๙, ช่องความเห็น ผอ., สิ่งที่ส่งมาด้วย) ทั้งแบบขออนุมัติฉบับเดียว หนังสือถึง สสจ. และคู่หนังสือ + ใบเสนอ ผอ. ค่าประจำหน่วยงานเก็บใน `~/.claude/thai-memo.json` ("บันทึกข้อความ", "ใบเสนอ ผอ.", "ขอลงนาม") |
 | [`update-skill-ko`](./skills/update-skill-ko) | เทียบ version หลักของ skills/agents/rules ที่ติดตั้งใน `~/.claude` กับ repo บน GitHub ถ้าไม่ตรงจะถามก่อนแล้วอัปเดตให้ ("update-skill-ko", "อัปเดต skill") |
 
 ## วินัยวิศวกร (รวมจากภายนอก)
