@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "ชุด skills + agents ของ ko สำหรับ Claude Code — lead/engineer team, git flow, QA ก่อนขึ้น PRD, Next static pack และ skills ตัวอย่างจาก Anthropic",
-    "version": "2.4.0"
+    "version": "2.5.0"
   },
   "plugins": [
     {
@@ -54,6 +54,15 @@
         "./skills/mcp-builder",
         "./skills/skill-creator",
         "./skills/webapp-testing"
+      ]
+    },
+    {
+      "name": "cloudflare-skills",
+      "description": "security-audit จาก cloudflare/security-audit-skill (MIT): ตรวจช่องโหว่ในโค้ดแบบ source-first — recon → hunting ตาม coverage ledger → ให้ agent อีกตัวพิสูจน์ซ้ำ → findings.json + REPORT.md",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/security-audit"
       ]
     }
   ]

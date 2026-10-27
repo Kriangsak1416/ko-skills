@@ -17,7 +17,7 @@ Skill คือโฟลเดอร์ที่มีคำสั่ง สค�
 แกนหลักคือ **ทีม AI ที่แบ่งงานกันเอง** — **Opus** เป็น tech lead (คิด วางแผน แตกงาน
 รีวิว รวมงาน) และ **Sonnet** เป็น engineer ที่ลงมือเขียนโค้ดจริง — ครอบด้วย skill สำหรับ
 git flow, QA ก่อน release และ deploy ส่วนที่เหลือเป็น skill ที่รวบรวมมาจากภายนอก
-(Anthropic, 9arm, Karpathy) ซึ่งเก็บไว้ตามต้นฉบับ ดูที่มาและ license ได้ที่
+(Anthropic, 9arm, Karpathy, Cloudflare) ซึ่งเก็บไว้ตามต้นฉบับ ดูที่มาและ license ได้ที่
 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)
 
 ทุก skill อยู่ในโฟลเดอร์ของตัวเองใต้ [`skills/`](./skills) และมี `SKILL.md`
@@ -60,6 +60,12 @@ THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ s
 | [`scrutinize`](./skills/scrutinize) | 9arm | รีวิว plan / PR / diff แบบคนนอก ถามก่อนว่าจำเป็นไหม มีทางง่ายกว่าไหม แล้วไล่ code path จริง |
 | [`post-mortem`](./skills/post-mortem) | 9arm | เขียนบันทึกบั๊กหลังแก้เสร็จ (root cause / fix / validation / หลุดมาได้ยังไง) |
 | [`management-talk`](./skills/management-talk) | 9arm | แปลงเรื่อง technical เป็นภาษาผู้บริหาร แยกทรงตามช่องทาง JIRA / Slack / standup / email |
+
+## ความปลอดภัย (รวมจากภายนอก)
+
+| skill | ที่มา | ใช้ตอนไหน |
+|---|---|---|
+| [`security-audit`](./skills/security-audit) | Cloudflare (MIT) | ถามเรื่องความปลอดภัย / รีวิวเฉพาะจุดใช้แบบ guidance ถ้าสั่ง "security audit โค้ดนี้" แบบเต็มจะรัน 6 เฟส: recon → hunting ตาม coverage ledger → ให้ agent อีกตัวพิสูจน์ซ้ำ → `findings.json` → ตรวจซ้ำ → `REPORT.md` ผลเขียนไว้นอก repo ที่ `~/security-audit-skill/<repo>/run-N` ต้องมี Node สำหรับ validator (แก้ให้รันบน Windows ได้แล้ว ดู [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)) |
 
 ## ตัวอย่างจาก Anthropic (Apache 2.0)
 
@@ -108,6 +114,7 @@ subagent ที่ `boss` ส่งงานให้ — ทุกตัวเ�
 /plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack, ollama-worker, update-skill-ko
 /plugin install 9arm-skills@ko-skills               # debug-mantra, scrutinize, post-mortem, management-talk
 /plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
+/plugin install cloudflare-skills@ko-skills         # security-audit
 ```
 
 plugin ไม่รองรับ `rules/` — ถ้าอยากได้พฤติกรรมอัตโนมัติ (แตกงานเอง, ถาม QA ก่อน build)
