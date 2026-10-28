@@ -1,6 +1,6 @@
 ---
 name: ship
-description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first — or reuse the existing one if it has not gone to PRD yet — and before any commit that would land on dev/develop/main.
+description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first, and before any commit that would land on dev/develop/main. Also use when frontend work needs the shared API changed — it opens a matching API branch as a git worktree on its own port.
 ---
 
 # Ship — feature branch → release → PR
@@ -39,8 +39,9 @@ or a message that does not match its neighbours:
 - **The integration branch** — `dev` or `develop`. This document says `dev`;
   substitute whatever the repo actually has.
 - **The feature-branch prefix** — bare `#<n>_<slug>` or `feature/#<n>_<slug>`.
-  Take it from the existing branches, and number from the highest `#N` there,
-  remote branches included — the local list is usually missing some.
+  Take it from the existing branches, and number from the highest `#N` on
+  origin — local branches are deleted once they ship, so the local list is
+  always missing some.
 - **The merge-message wording** — `git log --merges` on main shows the exact
   Thai phrasing previous releases used. Reuse it verbatim with the new numbers.
 
@@ -67,28 +68,12 @@ git rev-parse --abbrev-ref HEAD
 git status --porcelain
 ```
 
-**Reuse the branch until it ships.** A feature branch takes every new task
-until it goes to PRD; only after its release does the next task get a fresh
-branch. Run `git fetch origin`, then a feature branch counts as **unreleased**
-when it has commits dev does not (a non-zero
-`git rev-list --count 'origin/dev..<branch>'`), has uncommitted changes, or
-sits exactly on `origin/dev` (just cut).
-Features reach dev only through Flow B, so a branch already on dev is in PRD.
-
-- On a feature branch that is unreleased → skip to step 2, even if the new
-  request is a different task. Say in one line that the work joins this branch.
-- On a feature branch that is already released → switch to dev and run the
-  commands below for a fresh branch.
-- On dev/develop/main → first list unreleased local feature branches:
-  `git branch --no-merged origin/dev --format='%(refname:short)'`, keeping only
-  names with `#`. One → `git switch '<branch>'` and skip to step 2. Several →
-  ask once which. None → run the commands below.
+- On a feature branch for this task → skip to step 2.
+- On dev/develop/main with a clean tree → run the commands below.
 - On dev/develop with uncommitted changes that are **this task's work** (the
-  code was started before branching) → switch to the unreleased branch if there
-  is one (`git switch '<branch>'`; if git refuses over a conflict, stop and
-  report), otherwise `git switch -c '<branch>'` right where you are. The changes
-  carry over. Do not stash, reset, or pull first. Say that the branch starts
-  from local dev, which was not pulled.
+  code was started before branching) → `git switch -c '<branch>'` right where
+  you are; the changes carry over. Do not stash, reset, or pull first. Say that
+  the branch starts from local dev, which was not pulled.
 - Uncommitted changes that are **not** this task's work → stop and report.
 
 ```
@@ -99,8 +84,12 @@ git switch -c '#1_add_text_builder'
 ```
 
 Numbering: use the issue or ticket number when there is one. Otherwise take the
-next number above the highest `#N` already in use —
-`git branch -a --format='%(refname:short)'` — and say which number you picked.
+next number above the highest `#N` on origin, read live rather than from
+local refs that may be stale — `git ls-remote --heads origin` — and say which
+number you picked. If origin cannot be reached, stop and report; do not guess
+the number from local branches. When the task also changes the API, take the
+next number above the highest on **both** origins, so the same `#N` is free in
+each repo (see "The shared API" below).
 The slug is lowercase English `snake_case`, 2–4 words, describing the feature.
 
 Refuse to start from anything but an up-to-date `dev`. If `git pull --ff-only`
@@ -138,8 +127,7 @@ git commit --cleanup=whitespace -m '#1 เพิ่มตัวสร้าง�
 - Check for secrets before staging: `.env`, keys, tokens, credentials, dumps
 - Never write "ทดสอบผ่าน" in a message unless you ran the tests and saw them pass
 
-A branch collects every task until it goes to PRD — commit each task on its
-own, each subject starting with the branch's `#<n>`.
+One feature per branch. Several commits on the branch are fine.
 
 ### 4. Push
 
@@ -149,6 +137,79 @@ git push -u origin '#1_add_text_builder'
 
 Report the branch name and what was committed. Stop here — Flow A does not open
 a PR and does not touch dev.
+
+## The shared API — when the work also changes the backend
+
+Every frontend project of this user calls one API repo of their own, run
+locally for dev. Two projects in progress at once would fight over that one
+checkout, so each task gets its own **worktree** of the API: its own folder, its
+own branch, its own port.
+
+### Where the API repo lives
+
+The path is in `~/.claude/ship.json`. **Read it the first time a task touches
+the API in a session:**
+
+- **File missing** → ask the user, in Thai, for the path of the API repo
+  (e.g. `D:/work/sv-api`). Check it is a git repo
+  (`git -C '<path>' rev-parse --show-toplevel`), then write the file and
+  continue — do not ask again:
+
+  ```json
+  {"api_repo": "D:/work/sv-api"}
+  ```
+
+- **File present** → use `api_repo`. If that folder is gone or not a git repo,
+  ask again and overwrite.
+
+Skip all of this when the current repo **is** the API repo — then it is
+ordinary Flow A.
+
+### Cut the API branch as a worktree
+
+When a frontend task needs an API change, cut the matching API branch right
+after the frontend branch, before writing API code. Same `#N` and slug; the
+prefix follows the API repo's own convention (look, as in "Match the repo").
+The folder sits next to the API repo, named by the number only — no `#` in
+paths:
+
+```
+git -C '<api_repo>' fetch origin
+git -C '<api_repo>' worktree add '<api_repo>.wt/57' -b 'feature/#57_ward_dashboard' origin/develop
+```
+
+If `<api_repo>.wt/57` already exists, this task already has its API — reuse it.
+
+A new worktree has no `vendor/` and no `.env`. Set it up, then run it on port
+`8000 + N` (8057 for `#57`) in the background:
+
+```
+cp '<api_repo>/.env' '<api_repo>.wt/57/.env'
+composer install -d '<api_repo>.wt/57'
+php -S localhost:8057 -t '<api_repo>.wt/57/public'
+```
+
+Point the frontend's local API URL at `http://localhost:8057` — only in a
+git-ignored env file (`.env.local` and the like). If the setting lives in a
+tracked file, tell the user what to change instead. Say in one line which API
+branch, folder and port this task uses.
+
+Commit and push in the worktree exactly as steps 3–4, with `git -C`.
+
+### Change the API by adding, never by changing
+
+Several projects call this API, and some are already in PRD. Add a new endpoint,
+a new optional field or parameter, a new column — do not rename, remove, or
+change the meaning of what exists. **Before changing or removing an existing
+endpoint, response field, or column, stop and ask** — another project may
+depend on it. When it truly must change, add `/v2/...` beside the old one.
+
+The local dev database is shared by every worktree: a migration that alters a
+table another task also touches can break that task's API. Additive migrations
+avoid it.
+
+A change two tasks both need (a shared model or helper) gets its own API branch
+that ships first; the two task branches build on develop after it lands.
 
 ## Flow B — release to PRD
 
@@ -193,6 +254,12 @@ alive together.
 
 Only the branches the user names — not everything that exists.
 
+**API first.** If any of these branches has an API counterpart (a worktree at
+`<api_repo>.wt/<n>`, or a branch with the same `#N` on the API's origin), run
+Flow B in the API repo for those branches first — its own version, release, and
+PR — and finish it before this release. The API change is additive, so it is
+safe in PRD before the frontend that calls it. Say so in one line.
+
 ```
 git merge --no-ff '#1_add_text_builder' -m 'รวม #1_add_text_builder เข้า release v.1.0.0'
 git merge --no-ff '#2_fix_export_encoding' -m 'รวม #2_fix_export_encoding เข้า release v.1.0.0'
@@ -228,6 +295,34 @@ git push origin main --follow-tags
 
 Take the date from the system (`Get-Date -Format 'yyyy-MM-dd'`), never from
 memory.
+
+Then delete the feature branches merged in step 3 — they are in PRD now. Run it
+from dev, which carries the release even when the main push below is rejected.
+Delete the local copy only — leave the branch on origin:
+
+```
+git switch dev
+git branch -d '#1_add_text_builder'
+```
+
+Use `-d`, never `-D`: if git refuses because the branch is not fully merged,
+stop and report — that branch has work the release does not carry.
+
+In the API repo, a shipped branch is still checked out in its worktree, and git
+will not delete a checked-out branch. Stop its `php -S` first, then remove the
+worktree, then the branch:
+
+```
+git -C '<api_repo>' worktree remove '<api_repo>.wt/57'
+git -C '<api_repo>' branch -d 'feature/#57_ward_dashboard'
+rmdir '<api_repo>.wt'
+```
+
+`worktree remove` deletes the whole folder, git-ignored `vendor/` and `.env`
+included. It refuses when the folder has uncommitted changes or untracked files
+— stop and report, do not add `--force`. The last line removes the `.wt` parent
+only once it is empty; when another task's worktree is still in it, `rmdir`
+fails and the folder stays — that is fine.
 
 **If `git push origin main` is rejected**, main is a protected branch that only
 accepts an approved PR — which is the normal setup for this flow. Undo the local
