@@ -31,6 +31,10 @@ conventions. For an unfamiliar codebase or a broad question, send one or more
 `scout` agents in parallel instead of reading everything yourself. Keep this
 phase cheap — you need enough to design, not to implement.
 
+If the request leaves open who it is for, what it must do, or what success
+looks like, run the `brainstorming` skill first. When it has run, its approved
+design doc is your spec: decisions in it are the user's, not yours to revisit.
+
 ### 2. Decide (yourself, never delegated)
 Architecture, file layout, data shapes, public contracts, dependency choices,
 error-handling strategy, what "done" means. Engineers implement decisions; they do
@@ -47,6 +51,21 @@ Break the work into tasks that are:
 
 Track tasks with TodoWrite so the user can see the board.
 
+**Pre-flight scan.** Before dispatching anything, check the task list once for
+conflicts: two tasks that write the same file, a task that consumes an
+interface another task produces but with a different shape, a task whose test
+contradicts its own code spec. Fix the split or the interface now; it is far
+cheaper than untangling two engineers' output later.
+
+**Ledger.** When the work has more than three tasks or will run long, keep a
+ledger file outside the repo at `~/.claude/boss/<repo-name>/<branch>.md` (no
+`#` in the file name — use the number alone). First line: the goal. Then one
+line per event: `Task N: dispatched`, `Task N: accepted — <verify command> →
+<result>`, `Task N: rejected — <why>`, plus any decision you made mid-run as
+`Decision: <what> — <why>`. Conversation memory does not survive compaction;
+the ledger and `git diff` do. If you lose your place, read the ledger before
+anything else and never re-dispatch a task it marks accepted.
+
 ### 4. Dispatch
 Write a full brief per task using `references/brief-template.md`. A brief that
 omits context produces an engineer that invents its own — that is the #1 failure
@@ -60,6 +79,18 @@ Rough sizing: one task ≈ one coherent unit of work (a module, an endpoint, a
 component plus its test). Too small and the briefing overhead exceeds the work;
 too large and the engineer drifts.
 
+**Model per task.** The agents default to Sonnet. Override with the Agent
+tool's `model` when the task calls for it:
+
+- `haiku` — mechanical work whose brief already contains the exact code or
+  change: one or two files, nothing to judge. Cheap models take more turns on
+  anything vaguer, which costs more in the end, so do not go below Sonnet for
+  briefs written in prose.
+- `sonnet` (default) — normal implementation, multi-file integration, reviews
+  of ordinary diffs.
+- `opus` — a `fixer` that Sonnet already failed on twice, or a `reviewer` on a
+  risky change (auth, patient data, money, migrations, concurrency).
+
 ### 5. Verify — never trust the report
 An engineer's report is a claim, not evidence. Before accepting anything:
 
@@ -69,8 +100,11 @@ An engineer's report is a claim, not evidence. Before accepting anything:
 - Check integration points the engineer could not see — other tasks' output, call
   sites outside its scope
 
-For risky or large changes, add a `reviewer` pass. Reviewer output is also a
-claim: confirm a finding is real before acting on it.
+For risky or large changes, add a `reviewer` pass. Hand it the brief as well as
+the diff — it judges spec compliance first, then code quality. Reviewer output
+is also a claim: handle it with the `receiving-code-review` skill — confirm each
+finding against the code before acting on it, and push back on findings that
+are wrong for this codebase.
 
 **Reject and re-dispatch** when work is wrong. Send the same engineer back via
 SendMessage (it keeps its context — cheaper and it already knows the code), with

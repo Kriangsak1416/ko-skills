@@ -17,7 +17,7 @@ Skill คือโฟลเดอร์ที่มีคำสั่ง สค�
 แกนหลักคือ **ทีม AI ที่แบ่งงานกันเอง** — **Opus** เป็น tech lead (คิด วางแผน แตกงาน
 รีวิว รวมงาน) และ **Sonnet** เป็น engineer ที่ลงมือเขียนโค้ดจริง — ครอบด้วย skill สำหรับ
 git flow, QA ก่อน release และ deploy ส่วนที่เหลือเป็น skill ที่รวบรวมมาจากภายนอก
-(Anthropic, 9arm, Karpathy, Cloudflare) ซึ่งเก็บไว้ตามต้นฉบับ ดูที่มาและ license ได้ที่
+(Anthropic, 9arm, Karpathy, Cloudflare, superpowers) ซึ่งเก็บไว้ตามต้นฉบับ ดูที่มาและ license ได้ที่
 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)
 
 ทุก skill อยู่ในโฟลเดอร์ของตัวเองใต้ [`skills/`](./skills) และมี `SKILL.md`
@@ -61,6 +61,18 @@ THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ s
 | [`post-mortem`](./skills/post-mortem) | 9arm | เขียนบันทึกบั๊กหลังแก้เสร็จ (root cause / fix / validation / หลุดมาได้ยังไง) |
 | [`management-talk`](./skills/management-talk) | 9arm | แปลงเรื่อง technical เป็นภาษาผู้บริหาร แยกทรงตามช่องทาง JIRA / Slack / standup / email |
 
+## จาก superpowers (MIT)
+
+คัดมาจาก [obra/superpowers](https://github.com/obra/superpowers) เฉพาะตัวที่ไม่ทับ `boss`/`ship`
+ไม่ได้ลง SessionStart hook ของต้นทาง และไม่เอาตัวคุมงาน (subagent-driven-development, writing-plans,
+worktrees, finishing-a-development-branch) มาด้วย
+
+| skill | ใช้ตอนไหน |
+|---|---|
+| [`brainstorming`](./skills/brainstorming) | งานใหม่ที่โจทย์ยังไม่ชัด (เช่น requirement จากฝ่ายคลินิก/ฝ่ายบริหาร) หรือสั่ง "ช่วยคิด" / "ออกแบบก่อน" — ถามทีละข้อ ทวนความเข้าใจ เสนอ 2-3 ทางให้เลือก แล้วเขียน design doc ให้อนุมัติก่อนสร้าง จากนั้นส่งต่อให้ `boss` (doc เก็บนอก repo ที่ `~/.claude/brainstorming/<repo>/` ไม่ commit) |
+| [`verification-before-completion`](./skills/verification-before-completion) | ก่อนบอกว่าเสร็จ / แก้แล้ว / test ผ่าน หรือก่อน commit / PR — ต้องมีผลคำสั่งที่รันในรอบนี้ยืนยัน |
+| [`receiving-code-review`](./skills/receiving-code-review) | ได้ feedback จาก `reviewer` หรือคอมเมนต์ใน PR — ตรวจกับโค้ดจริงก่อนแก้ แย้งได้ถ้าผิด ไม่รับมาแก้ทันทีแบบไม่คิด |
+
 ## ความปลอดภัย (รวมจากภายนอก)
 
 | skill | ที่มา | ใช้ตอนไหน |
@@ -97,6 +109,7 @@ subagent ที่ `boss` ส่งงานให้ — ทุกตัวเ�
 | `delegate-by-default.md` | งานหลายขั้นหรือแตะ 3 ไฟล์ขึ้นไปเข้าโหมด `boss` เอง งานเล็ก lead ทำเอง |
 | `karpathy-by-default.md` | ใช้ `karpathy-guidelines` ทุกครั้งที่เขียน/แก้/รีวิวโค้ด |
 | `branch-before-work.md` | ก่อนแก้โค้ดและก่อน commit เช็ค branch ถ้าอยู่บน dev/develop/main จะแตก feature branch ผ่าน `ship` ก่อนเสมอ |
+| `verify-before-done.md` | ก่อนบอกว่างานเสร็จ / ก่อน commit ใช้ `verification-before-completion` เสมอ รวมงานเล็กที่ lead ทำเอง |
 | `qa-before-prd.md` | ก่อน build/แพ็ก/release ขึ้น production ถามหนึ่งครั้งว่าจะรัน `qa` ก่อนไหม |
 | `skills-explain-in-thai.md` | ทุก skill สื่อสารกับผู้ใช้เป็นภาษาไทย แม้ `SKILL.md` เป็นอังกฤษ |
 
@@ -115,6 +128,7 @@ subagent ที่ `boss` ส่งงานให้ — ทุกตัวเ�
 /plugin install 9arm-skills@ko-skills               # debug-mantra, scrutinize, post-mortem, management-talk
 /plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
 /plugin install cloudflare-skills@ko-skills         # security-audit
+/plugin install superpowers-skills@ko-skills        # brainstorming, verification-before-completion, receiving-code-review
 ```
 
 plugin ไม่รองรับ `rules/` — ถ้าอยากได้พฤติกรรมอัตโนมัติ (แตกงานเอง, ถาม QA ก่อน build)

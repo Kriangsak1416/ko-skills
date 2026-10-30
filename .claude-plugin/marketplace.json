@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "ชุด skills + agents ของ ko สำหรับ Claude Code — lead/engineer team, git flow, QA ก่อนขึ้น PRD, Next static pack และ skills ตัวอย่างจาก Anthropic",
-    "version": "2.6.0"
+    "version": "2.7.0"
   },
   "plugins": [
     {
@@ -63,6 +63,17 @@
       "strict": false,
       "skills": [
         "./skills/security-audit"
+      ]
+    },
+    {
+      "name": "superpowers-skills",
+      "description": "คัดจาก obra/superpowers (MIT): brainstorming (ถามให้ชัด → design doc → ส่งต่อ boss), verification-before-completion (ห้ามบอกว่าเสร็จถ้ายังไม่ได้รันพิสูจน์), receiving-code-review (ตรวจ feedback กับโค้ดจริงก่อนแก้)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/brainstorming",
+        "./skills/verification-before-completion",
+        "./skills/receiving-code-review"
       ]
     }
   ]
