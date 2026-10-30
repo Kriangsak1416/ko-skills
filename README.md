@@ -32,7 +32,6 @@ skills/                           # skill ละโฟลเดอร์ (SKILL.
 agents/                           # subagent ที่ boss ใช้: coder / fixer / reviewer / scout
 rules/                            # กฎที่โหลดทุกเซสชัน (ต้องก๊อปมือ — plugin ไม่รองรับ rules)
 settings.json                     # ตัวอย่าง settings: lead = opus, subagent = sonnet, effort = high, permission พื้นฐาน
-scripts/                          # check-updates.sh (hook เช็คของใหม่ตอนเปิดเซสชัน) + update-skills.sh (pull แล้วก๊อปทับ)
 template/SKILL.md                 # เทมเพลตเริ่ม skill ใหม่
 THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ skill ที่รวมมาจากที่อื่น
 CHANGELOG.md                      # มีอะไรเปลี่ยนในแต่ละ version — สคริปต์อัปเดตอ่านไฟล์นี้ไปบอกผู้ใช้
@@ -160,42 +159,15 @@ cp    rules/*.md ~/.claude/rules/
 เป็น opus ถ้ายังไม่ตรงตั้งด้วย `/model opus` หรือเทียบกับ [`settings.json`](./settings.json)
 จากนั้นรีสตาร์ต Claude Code
 
-## อัปเดต — ให้ Claude ถามเองเมื่อมีของใหม่ (สำหรับแบบที่ 2)
-
-เพิ่ม hook ใน `~/.claude/settings.json` ชี้ไปที่ clone ของ repo นี้ (เปลี่ยน path ให้ตรงเครื่อง):
-
-```json
-"hooks": {
-  "SessionStart": [
-    {
-      "matcher": "startup",
-      "hooks": [
-        { "type": "command", "command": "bash \"D:/path/to/ko-skills/scripts/check-updates.sh\"", "timeout": 30 }
-      ]
-    }
-  ]
-}
-```
-
-ทุกครั้งที่เปิด Claude Code `check-updates.sh` จะ `git fetch` แล้วเทียบ `skills/` `agents/` `rules/`
-ใน repo กับที่ติดตั้งใน `~/.claude` ทีละไฟล์ ถ้ามีอะไรต่างกัน Claude จะบอกว่า skill ไหนเปลี่ยน
-แล้วถามหนึ่งครั้งว่าจะอัปเดตไหม — ตอบว่าอัปเดตแล้ว Claude จะรัน `update-skills.sh`
-(`git pull --ff-only` + ก๊อปทับเหมือนขั้นติดตั้ง) ตอบว่าไม่ก็ไม่ถามซ้ำจนกว่าจะเปิดเซสชันใหม่
-ไม่มีอะไรต่างกันหรือออฟไลน์ก็เงียบ ๆ ไม่รบกวน
-
-อัปเดตเองโดยไม่รอถามก็ได้: `bash scripts/update-skills.sh`
-
-แบบที่ 1 (plugin) ไม่ต้องใช้ตัวนี้ — อัปเดตผ่าน `/plugin` ได้เลย
-
-## เช็ค version กับ GitHub — skill `update-skill-ko`
+## อัปเดต — skill `update-skill-ko` (สำหรับแบบที่ 2)
 
 พิมพ์ `update-skill-ko` ในเซสชันไหนก็ได้ ไม่ต้องมี clone ของ repo ในเครื่อง Claude จะเทียบ
 version หลัก (`metadata.version` ใน [`.claude-plugin/marketplace.json`](./.claude-plugin/marketplace.json))
 บน GitHub กับที่บันทึกไว้ใน `~/.claude/ko-skills.version` ถ้าไม่ตรงกันจะถามก่อน แล้วค่อย clone
-ของล่าสุดมาก๊อปทับให้
+ของล่าสุดมาก๊อปทับให้ ทั้งตอนถามและหลังอัปเดตเสร็จจะบอกว่ามีอะไรเปลี่ยนบ้าง โดยดึงหัวข้อใน
+[`CHANGELOG.md`](./CHANGELOG.md) ที่ใหม่กว่า version ในเครื่องมาสรุปให้
 
-ทั้ง `update-skill-ko`, hook ตอนเปิดเซสชัน และ `update-skills.sh` จะบอกว่ามีอะไรเปลี่ยนบ้าง
-โดยดึงหัวข้อใน [`CHANGELOG.md`](./CHANGELOG.md) ที่ใหม่กว่า version ในเครื่องมาให้ดู
+แบบที่ 1 (plugin) ไม่ต้องใช้ตัวนี้ — อัปเดตผ่าน `/plugin` ได้เลย
 
 **คนดูแล repo:** แก้อะไรใน `skills/` `agents/` `rules/` แล้วต้อง bump `metadata.version` ทุกครั้ง
 และเพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดของ `CHANGELOG.md` ไม่อย่างนั้นเครื่องอื่นเช็คไม่เจอ

@@ -8,9 +8,12 @@
 
 ## 2.9.0 — 2026-10-30
 
-- อัปเดต ko-skills แล้วจะบอกว่ามีอะไรเปลี่ยนบ้าง: `update-skill-ko`, hook ตอนเปิดเซสชัน
-  และ `update-skills.sh` แสดงรายการจากไฟล์นี้ เฉพาะ version ที่ใหม่กว่าในเครื่อง
+- `update-skill-ko` บอกว่ามีอะไรเปลี่ยนบ้าง ทั้งตอนถามและหลังอัปเดต โดยดึงจากไฟล์นี้
+  เฉพาะ version ที่ใหม่กว่าในเครื่อง
 - เพิ่ม `CHANGELOG.md` (ไฟล์นี้)
+- **ลบ `scripts/check-updates.sh` และ `scripts/update-skills.sh`** — อัปเดตผ่าน `update-skill-ko`
+  ทางเดียว ถ้าเคยใส่ hook `SessionStart` ที่ชี้ไป `check-updates.sh` ใน `~/.claude/settings.json`
+  **ต้องลบ hook นั้นออกเอง** ไม่อย่างนั้นจะ error ทุกครั้งที่เปิด Claude Code หลัง pull repo
 
 ## 2.8.1 — 2026-10-30
 
