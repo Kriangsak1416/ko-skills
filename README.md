@@ -35,6 +35,7 @@ settings.json                     # ตัวอย่าง settings: lead = op
 scripts/                          # check-updates.sh (hook เช็คของใหม่ตอนเปิดเซสชัน) + update-skills.sh (pull แล้วก๊อปทับ)
 template/SKILL.md                 # เทมเพลตเริ่ม skill ใหม่
 THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ skill ที่รวมมาจากที่อื่น
+CHANGELOG.md                      # มีอะไรเปลี่ยนในแต่ละ version — สคริปต์อัปเดตอ่านไฟล์นี้ไปบอกผู้ใช้
 ```
 
 # Skills ใน repo นี้
@@ -193,8 +194,12 @@ version หลัก (`metadata.version` ใน [`.claude-plugin/marketplace.jso
 บน GitHub กับที่บันทึกไว้ใน `~/.claude/ko-skills.version` ถ้าไม่ตรงกันจะถามก่อน แล้วค่อย clone
 ของล่าสุดมาก๊อปทับให้
 
+ทั้ง `update-skill-ko`, hook ตอนเปิดเซสชัน และ `update-skills.sh` จะบอกว่ามีอะไรเปลี่ยนบ้าง
+โดยดึงหัวข้อใน [`CHANGELOG.md`](./CHANGELOG.md) ที่ใหม่กว่า version ในเครื่องมาให้ดู
+
 **คนดูแล repo:** แก้อะไรใน `skills/` `agents/` `rules/` แล้วต้อง bump `metadata.version` ทุกครั้ง
-ไม่อย่างนั้นเครื่องอื่นเช็คไม่เจอว่ามีของใหม่
+และเพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดของ `CHANGELOG.md` ไม่อย่างนั้นเครื่องอื่นเช็คไม่เจอ
+ว่ามีของใหม่ หรือรู้แค่ว่ามีแต่ไม่รู้ว่าอะไร
 
 ## แบบที่ 3 — เฉพาะโปรเจกต์
 

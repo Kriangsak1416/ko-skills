@@ -48,6 +48,18 @@ behind="$(git rev-list --count HEAD..origin/main 2>/dev/null || echo 0)"
 echo "[ko-skills] มี skill/agent/rule ใน repo ที่ต่างจากที่ติดตั้งใน ~/.claude:"
 printf '%s\n' "$changed" | sed 's/^/  - /'
 [ "$behind" -gt 0 ] && echo "(GitHub ใหม่กว่าเครื่องนี้ $behind commit — update-skills.sh จะ pull ให้)"
+
+# หัวข้อใน CHANGELOG.md ที่ใหม่กว่า version ที่ติดตั้งอยู่ (อ่านจาก origin/main ถ้า fetch ได้)
+since="$(cat "$dest/ko-skills.version" 2>/dev/null || echo none)"
+notes="$(
+  { git show origin/main:CHANGELOG.md 2>/dev/null || cat CHANGELOG.md 2>/dev/null; } \
+    | bash "$repo/skills/update-skill-ko/update-skill-ko.sh" changes "$since"
+)"
+if [ -n "$notes" ]; then
+  echo "มีอะไรใหม่ (ในเครื่องเป็น $since):"
+  printf '%s\n' "$notes"
+  echo "ตอนถาม ให้สรุปรายการนี้เป็นภาษาไทยสั้น ๆ ให้ผู้ใช้เห็นก่อนตัดสินใจ"
+fi
 echo "ให้ถามผู้ใช้หนึ่งครั้งด้วย AskUserQuestion ว่าจะอัปเดต skills ตอนนี้ไหม"
 echo "ถ้าตอบว่าอัปเดต ให้รัน: bash \"$repo_show/scripts/update-skills.sh\""
 echo "ถ้าตอบว่าไม่ ไม่ต้องถามซ้ำอีกในเซสชันนี้"

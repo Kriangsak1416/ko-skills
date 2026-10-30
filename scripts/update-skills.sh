@@ -6,6 +6,7 @@ set -eu
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 dest="$HOME/.claude"
 cd "$repo"
+old_v="$(cat "$dest/ko-skills.version" 2>/dev/null || echo none)"
 
 GIT_TERMINAL_PROMPT=0 git pull -q --ff-only origin main \
   || echo "pull ไม่สำเร็จ (ออฟไลน์ หรือมีแก้ค้างใน repo) — ก๊อปจากที่มีในเครื่องแทน"
@@ -18,3 +19,9 @@ cp    rules/*.md "$dest/rules/"
 sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' .claude-plugin/marketplace.json | head -n 1 > "$dest/ko-skills.version"
 
 echo "อัปเดต skills/agents/rules ลง $dest แล้ว — ถ้าเซสชันนี้ยังเห็นของเก่า ให้รีสตาร์ต Claude Code"
+
+new_v="$(cat "$dest/ko-skills.version")"
+if [ "$old_v" != "$new_v" ] && [ -f CHANGELOG.md ]; then
+  echo "มีอะไรเปลี่ยน ($old_v → $new_v):"
+  bash skills/update-skill-ko/update-skill-ko.sh changes "$old_v" CHANGELOG.md
+fi
