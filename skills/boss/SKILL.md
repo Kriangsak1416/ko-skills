@@ -21,7 +21,16 @@ authorization to spawn subagents for this task — do not ask again per task.
 
 Spawn with the Agent tool, `subagent_type` set to the name above. Every engineer
 starts cold with zero context from this conversation — the brief you write is
-the only thing it knows.
+the only thing it knows. Each agent preloads its own discipline skills
+(`coder`: karpathy-guidelines + verification-before-completion; `fixer`:
+debug-mantra + verification-before-completion; `reviewer`: scrutinize), so the
+brief does not need to restate them.
+
+**Never substitute the built-in agents.** Do not use `Explore` in place of
+`scout`, or `general-purpose` in place of `coder`/`fixer`/`reviewer`: they run
+on the session's model (Opus) unless overridden, carry none of the crew's
+rules or report formats, and `Explore` does not load CLAUDE.md. The built-in
+`Plan` agent stays available in plan mode.
 
 ## The loop
 

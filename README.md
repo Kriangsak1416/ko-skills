@@ -31,7 +31,7 @@ git flow, QA ก่อน release และ deploy ส่วนที่เห�
 skills/                           # skill ละโฟลเดอร์ (SKILL.md + references/scripts)
 agents/                           # subagent ที่ boss ใช้: coder / fixer / reviewer / scout
 rules/                            # กฎที่โหลดทุกเซสชัน (ต้องก๊อปมือ — plugin ไม่รองรับ rules)
-settings.json                     # ตัวอย่าง settings: lead = opus, effort = high, permission พื้นฐาน
+settings.json                     # ตัวอย่าง settings: lead = opus, subagent = sonnet, effort = high, permission พื้นฐาน
 scripts/                          # check-updates.sh (hook เช็คของใหม่ตอนเปิดเซสชัน) + update-skills.sh (pull แล้วก๊อปทับ)
 template/SKILL.md                 # เทมเพลตเริ่ม skill ใหม่
 THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ skill ที่รวมมาจากที่อื่น
@@ -91,14 +91,23 @@ worktrees, finishing-a-development-branch) มาด้วย
 
 ## Agents ([`agents/`](./agents))
 
-subagent ที่ `boss` ส่งงานให้ — ทุกตัวเป็น Sonnet
+subagent ที่ `boss` ส่งงานให้ — ทุกตัวเป็น Sonnet และโหลด skill ของตัวเองตอนเริ่ม (ฟิลด์ `skills:`)
+ไม่ต้องให้ lead คัดสาระ skill ใส่ใบสั่งงาน
 
-| agent | หน้าที่ |
-|---|---|
-| `coder` | เขียน/แก้โค้ดตามสเปกที่ lead ตัดสินใจแล้ว |
-| `fixer` | ดีบัก หาสาเหตุจริง แก้แบบน้อยที่สุด พร้อมพิสูจน์ |
-| `reviewer` | รีวิว diff หาบั๊ก (อ่านอย่างเดียว ไม่แก้) |
-| `scout` | สำรวจโค้ดเบส หา call site ก่อนวางแผน |
+| agent | หน้าที่ | skill ที่โหลดเอง |
+|---|---|---|
+| `coder` | เขียน/แก้โค้ดตามสเปกที่ lead ตัดสินใจแล้ว | `karpathy-guidelines`, `verification-before-completion` |
+| `fixer` | ดีบัก หาสาเหตุจริง แก้แบบน้อยที่สุด พร้อมพิสูจน์ | `debug-mantra`, `verification-before-completion` |
+| `reviewer` | รีวิว diff 2 ขั้น: ตรงสเปก → คุณภาพโค้ด (อ่านอย่างเดียว ไม่แก้) | `scrutinize` |
+| `scout` | สำรวจโค้ดเบส หา call site ก่อนวางแผน | — |
+
+skill ที่ไม่ได้ติดตั้งจะถูกข้ามเงียบ ๆ (มีแค่ warning ใน debug log) — ถ้าลงแบบ plugin ให้ลง
+`9arm-skills` และ `superpowers-skills` ด้วย agent จึงจะได้ skill ครบ
+
+`boss` ห้ามใช้ built-in agent ของ Claude Code (`Explore`, `general-purpose`) แทนทีมนี้ เพราะจะรันบน
+model ของเซสชัน (Opus) และไม่มีกฎ/รูปแบบรายงานของทีม — `settings.json` ตั้ง
+`CLAUDE_CODE_SUBAGENT_MODEL=sonnet` กันไว้อีกชั้นสำหรับ agent ที่ไม่ได้ระบุ model
+(ต้องใช้ Claude Code v2.1.251 ขึ้นไป รุ่นเก่ากว่านั้นตัวแปรนี้จะทับ `model` ที่ `boss` สั่งรายครั้งด้วย)
 
 ## Rules ([`rules/`](./rules))
 
