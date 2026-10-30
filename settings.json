@@ -1,6 +1,9 @@
 {
   "model": "opus",
   "effortLevel": "high",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
   "permissions": {
     "allow": [
       "Read",
