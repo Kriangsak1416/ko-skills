@@ -28,6 +28,8 @@ release merge.
 **Skip when:**
 
 - the folder is not a git repository
+- the repo is listed in `ship`'s "Repos that work on main directly" (e.g.
+  `Kriangsak1416/ko-skills`) — work and commit on `main` as that section says
 - the user says to work on the current branch — "ทำบน dev เลย", "ไม่ต้องแตก branch"
 - the request is a question, an explanation, or a read-only investigation
 - the repo has no `dev`/`develop` — ask once per session whether to branch off

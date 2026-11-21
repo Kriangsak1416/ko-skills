@@ -6,6 +6,13 @@
 **คนดูแล repo:** bump version เมื่อไหร่ เพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดทุกครั้ง
 เขียนจากมุมคนใช้ (อะไรเปลี่ยนในพฤติกรรม / ต้องทำอะไรเพิ่ม) ไม่ใช่รายการไฟล์
 
+## 2.11.1 — 2026-11-21
+
+- `ship` + rule `branch-before-work`: repo `ko-skills` เองไม่ต้องแตก branch แล้ว
+  แก้ commit และ push บน `main` ได้เลย ไม่มี release branch, PR หรือ tag
+  การ bump `metadata.version` + `CHANGELOG.md` ใน commit เดียวกันถือเป็นการ release
+  repo อื่นยังใช้ flow เดิมทุกอย่าง
+
 ## 2.11.0 — 2026-11-21
 
 - เพิ่ม `framer-motion`: ถามว่า "ใช้ framer-motion ได้ไหม" แล้วมันจะเช็ค peer dependency,
