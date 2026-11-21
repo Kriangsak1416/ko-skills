@@ -47,6 +47,7 @@ CHANGELOG.md                      # มีอะไรเปลี่ยนใ�
 | [`ship`](./skills/ship) | git flow ของทีม: branch `#N_slug` → commit ภาษาไทย → push → release `v.X.Y.Z` → เปิด PR dev → main ("อัพงาน", "ขึ้น PRD", "เปิด PR") |
 | [`qa`](./skills/qa) | ตรวจก่อนขึ้น PRD 4 เฟส: build readiness → bug audit → web security (OWASP + PDPA) → migrations แล้วตัดสิน GO / NO-GO |
 | [`next-static-pack`](./skills/next-static-pack) | build Next.js เป็น static export แก้ชื่อไฟล์ RSC บน Windows แล้วแพ็กพร้อม `.htaccess` (CSP/headers) ขึ้น Apache ที่ไม่มี Node |
+| [`framer-motion`](./skills/framer-motion) | เช็คว่าโปรเจกต์ใช้ framer-motion / `motion` ได้ไหม (React 18/19 เท่านั้น ใช้กับ Vue ไม่ได้) แล้วใส่ animation แบบที่ทีมใช้: `"use client"`, `LazyMotion` ให้ bundle เล็ก, รองรับการตั้งค่าลดการเคลื่อนไหว, เช็ค CSP ตอน static export และไม่ให้ animation เล่นซ้ำทุกรอบที่ dashboard ดึงข้อมูล ("ใช้ framer-motion ได้ไหม", "ใส่ animation") |
 | [`ollama-worker`](./skills/ollama-worker) | โยนงานเว็บชิ้นเล็ก ๆ (HTML fragment, CSS class, Tailwind component, ฟังก์ชันสั้น ๆ, mock data) ให้โมเดล local บน Ollama ทำฟรี Claude เป็นคนเขียน brief เรียก API แล้วตรวจผลเอง ใช้ครั้งแรกในเครื่องจะถามก่อนว่าจะใช้ไหม / host / model แล้วจำไว้ใน `~/.claude/ollama-worker.json` ("ให้ ollama ทำ", "ใช้ qwen", "ประหยัด token") |
 | [`thai-memo`](./skills/thai-memo) | ร่างบันทึกข้อความราชการเป็น .docx ตามแบบสารบรรณ (ตราครุฑ, TH SarabunIT๙, ช่องความเห็น ผอ., สิ่งที่ส่งมาด้วย) ทั้งแบบขออนุมัติฉบับเดียว หนังสือถึง สสจ. และคู่หนังสือ + ใบเสนอ ผอ. ค่าประจำหน่วยงานเก็บใน `~/.claude/thai-memo.json` ("บันทึกข้อความ", "ใบเสนอ ผอ.", "ขอลงนาม") |
 | [`thai-voiceover`](./skills/thai-voiceover) | แปลงบทพากย์ภาษาไทยเป็นไฟล์ WAV แยกตาม frame พร้อมเวลาของแต่ละคำและ `audio_meta.json` ที่ HyperFrames อ่านได้ ใช้ PyThaiTTS บน CPU เป็นค่าเริ่มต้น ถ้ามี GPU และไฟล์เสียงต้นแบบจะใช้ ThonburianTTS (โคลนเสียง ห้ามใช้เชิงพาณิชย์) ("เสียงพากย์ไทย", "พากย์เสียง", "ทำ voiceover") |
@@ -134,7 +135,7 @@ model ของเซสชัน (Opus) และไม่มีกฎ/รู�
 แล้วเลือกลงเป็นชุด:
 
 ```
-/plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack, ollama-worker, update-skill-ko
+/plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack, framer-motion, ollama-worker, update-skill-ko
 /plugin install 9arm-skills@ko-skills               # debug-mantra, scrutinize, post-mortem, management-talk
 /plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
 /plugin install cloudflare-skills@ko-skills         # security-audit
