@@ -6,6 +6,22 @@
 **คนดูแล repo:** bump version เมื่อไหร่ เพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดทุกครั้ง
 เขียนจากมุมคนใช้ (อะไรเปลี่ยนในพฤติกรรม / ต้องทำอะไรเพิ่ม) ไม่ใช่รายการไฟล์
 
+## 2.12.0 — 2026-11-21
+
+- `ship` อ่านธรรมเนียมของแต่ละ repo ให้ครบขึ้นก่อนเริ่ม: นอกจาก dev/develop และชื่อ feature
+  branch แล้ว ดูด้วยว่า production เป็น `main` หรือ `master`, release branch เป็น
+  `v.X.Y.Z` หรือ `release/X.Y.Z`, tag มี `v.` หรือไม่ และตั้งชื่อ PR ตาม release ก่อน ๆ
+  - บันทึกธรรมเนียมของ PMEC ไว้: `develop` / `master`, `feature/<slug>` ไม่มี `#N`,
+    `release/X.Y.Z`, tag `X.Y.Z` และ flow finish release เข้า develop แล้วเปิด PR
+    develop → master ก่อน tag และ build จาก master
+- `ship` ห้าม merge feature branch เข้า main/master ตรง ๆ และบอกวิธีแก้ถ้าเกิดไปแล้ว
+  (ทำ release ย้อนหลังจาก dev ไม่ revert ไม่แก้ประวัติ)
+- `ship` build และ deploy ได้เฉพาะจาก commit บน main/master ที่ติด tag แล้ว
+- `ship` บอกวิธี push เมื่อ git ขึ้น "Repository not found" เพราะ repo ย้ายไป organization
+  (ใช้ login ของ `gh` เฉพาะคำสั่งนั้น ไม่แก้ config ของเครื่อง)
+- เทมเพลต PR ของ `ship`: ตั้งชื่อตาม PR release ก่อน ๆ ของ repo และต้องเขียนใน PR
+  ถ้ามีอะไรขึ้นผิดลำดับ
+
 ## 2.11.1 — 2026-11-21
 
 - `ship` + rule `branch-before-work`: repo `ko-skills` เองไม่ต้องแตก branch แล้ว
