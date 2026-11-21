@@ -1,6 +1,6 @@
 ---
 name: ship
-description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>`, commit in Thai and push, then cut a `v.X.Y.Z` release branch, finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first, and before any commit that would land on dev/develop/main. Also use when frontend work needs the shared API changed — it opens a matching API branch as a git worktree on its own port.
+description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>` (or the repo's own scheme, e.g. `feature/<slug>`), commit in Thai and push, then cut a release branch (`v.X.Y.Z` or `release/X.Y.Z`, per repo), finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first, and before any commit that would land on dev/develop/main. Also use when frontend work needs the shared API changed — it opens a matching API branch as a git worktree on its own port.
 ---
 
 # Ship — feature branch → release → PR
@@ -29,11 +29,12 @@ differently and the repo always wins. Before the first command, look:
 
 ```
 git branch -a --format='%(refname:short)'
-git tag --list 'v.*' --sort=-v:refname | head
-git log --merges --format='%h %s' -8 origin/main
+git tag --list --sort=-v:refname | head
+git log --merges --format='%h %s' -8 origin/main   # or origin/master
+gh pr list --state merged --limit 6 --json number,title,headRefName,baseRefName
 ```
 
-Read three things off that output — getting any of them wrong produces a branch
+Read these off that output — getting any of them wrong produces a branch
 or a message that does not match its neighbours:
 
 - **The integration branch** — `dev` or `develop`. This document says `dev`;
@@ -44,6 +45,9 @@ or a message that does not match its neighbours:
   always missing some.
 - **The merge-message wording** — `git log --merges` on main shows the exact
   Thai phrasing previous releases used. Reuse it verbatim with the new numbers.
+- **The production branch, release-branch and tag format** — `main` or
+  `master`; `v.1.10.10` or `release/2.6.0`; tags `v.1.10.10` or `2.6.0`. Release
+  PR titles too (`gh pr list`). Use what is there, not this document's examples.
 
 Say in one line which conventions you found before starting.
 
@@ -54,6 +58,17 @@ integration branch is **`develop`**, feature branches are
 is **not protected** — the step-4 push to main succeeds, so step 5's PR is
 purely the release record. An old `release/v.1.6.0` branch still sits on origin
 from a retired convention; do not copy it.
+
+Recorded from `PMEC` (Digital-Health-Phrae-Hospital/PMEC, Vue + Laravel),
+verified on releases 2.6.0 and 2.6.1: integration branch **`develop`**,
+production **`master`**, feature branches **`feature/<slug>`** and
+**`fix/<slug>`** with **no `#N`**, release branches **`release/X.Y.Z`**, tags
+**`X.Y.Z`** (no `v.`), merge wording `รวม feature/admin-ux เข้า release 2.6.0`
+and `รวม release 2.6.0 กลับเข้า develop`. The user's flow for it, in their words:
+แตก branch จาก dev → แตก release จาก dev → merge branch ที่จะขึ้นเข้า release →
+finish release เข้า dev → **เปิด PR จาก dev เข้า master** → tag แล้ว **build จาก
+master**. So in PMEC step 4 does **not** merge into master locally: finish into
+`develop` only, then step 5's PR is what moves master; tag after the PR is merged.
 
 ## Flow A — feature work
 
@@ -409,10 +424,42 @@ for them to paste, plus the compare link:
 Report the PR URL when it is created. **Do not merge it** — someone else
 approves and merges.
 
+## A feature branch was merged straight into main/master
+
+It happens (a PR opened from the feature branch to main and merged). Do not
+revert it and do not rewrite main — the code is published. Put the graph back
+on the flow instead: cut a release branch from dev, merge the same feature
+branch into it, finish into dev, and open the dev → main PR. The PR then
+carries only merge commits (`git diff origin/main..<release>` is empty); say so
+in the first line of its body. Then tag and build from main as usual.
+
+## Build and deploy only from the tagged production commit
+
+The artifact that goes to PRD is built from main/master **after** the release
+PR is merged and tagged — check `git describe --tags --exact-match` prints the
+version before building. Never deploy a build from a feature or release
+branch. If something already went out of order (e.g. backend files deployed
+from a feature branch before the PR), compare the server files against the
+tag by checksum and write what happened in the PR body.
+
+## `git push` says "Repository not found"
+
+Usually the repo was transferred to an organization (the old URL still
+redirects) and git is not using the `gh` login. `gh repo view <old>/<repo>
+--json nameWithOwner` shows the new home. Use gh's credentials for that one
+command — no global config change:
+
+```
+git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push -u origin '<branch>'
+```
+
 ## Standing rules
 
 - **Never commit directly to dev/develop/main/master.** Feature work lives on a
   feature branch; dev and main change only through Flow B's merges.
+- **Never merge a feature branch straight into main/master**, PR or not. If it
+  happened anyway, fix it as in "A feature branch was merged straight into main".
+- **Build and deploy only from the tagged main/master commit.**
 - **Never force-push and never rewrite published history.** No `--force`, no
   `rebase` on a branch that is already on origin, no amending a pushed commit.
 - **Never merge or approve the PR yourself.**

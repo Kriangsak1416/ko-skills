@@ -1,6 +1,7 @@
 # PR description template (dev → main)
 
-Title is the version then the date, nothing else:
+Title: copy the repo's past release PRs (`gh pr list --state merged`) — PMEC uses
+`Release 2.6.0 — <สรุปสั้น ๆ>`. With no history to copy, the version then the date:
 
 ```
 v.1.0.0 - 2026-08-01
@@ -41,3 +42,5 @@ section — an empty section means an unanswered question for the reviewer.
 - Reference feature branches by their real names so the reviewer can map commits
   back to the work.
 - Dates come from the system clock, not from memory.
+- If anything shipped out of order (deployed before main, a feature merged straight
+  into main), say so in the body — reviewers must not discover it later.
