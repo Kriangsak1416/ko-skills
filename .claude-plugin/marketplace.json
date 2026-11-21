@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "ชุด skills + agents ของ ko สำหรับ Claude Code — lead/engineer team, git flow, QA ก่อนขึ้น PRD, Next static pack และ skills ตัวอย่างจาก Anthropic",
-    "version": "2.9.0"
+    "version": "2.10.0"
   },
   "plugins": [
     {
@@ -74,6 +74,15 @@
         "./skills/brainstorming",
         "./skills/verification-before-completion",
         "./skills/receiving-code-review"
+      ]
+    },
+    {
+      "name": "vercel-skills",
+      "description": "find-skills จาก vercel-labs/skills (MIT): ค้น skill ใน skills.sh ผ่าน `npx skills find` เช็คยอดติดตั้ง/แหล่งที่มาก่อนแนะนำ แล้วติดตั้งให้ด้วย `npx skills add -g` (ต้องมี Node.js 22.20+)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/find-skills"
       ]
     }
   ]

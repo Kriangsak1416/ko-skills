@@ -22,5 +22,6 @@ skills ใน repo นี้บางตัวคัดลอกมาจาก�
 | `skills/brainstorming` | [obra/superpowers](https://github.com/obra/superpowers) v7.0.1 (commit `2ce8aa1`) | MIT (`LICENSE` ในโฟลเดอร์ ก๊อปจาก root ของต้นทาง) | `SKILL.md`: description แคบลง (เรียกเมื่อสั่งหรือโจทย์ยังไม่ชัด ไม่ใช่ทุกงานสร้าง) + คำ trigger ภาษาไทย, design doc เก็บนอก repo ที่ `~/.claude/brainstorming/<repo>/` ไม่ commit (ต้นทาง commit ลง `docs/superpowers/specs/`), หลังอนุมัติส่งต่อให้ `boss` แทน `superpowers:writing-plans`, เพิ่มหัวข้อผู้ใช้งาน/ข้อมูลผู้ป่วย (PDPA) — `scripts/server.cjs`: ปิด telemetry ถาวร หน้า visual companion จะไม่โหลดโลโก้จาก primeradiant.com ทุกจุดที่แก้มี comment `ko-skills patch:` |
 | `skills/verification-before-completion` | [obra/superpowers](https://github.com/obra/superpowers) v7.0.1 (commit `2ce8aa1`) | MIT (`LICENSE` ในโฟลเดอร์) | — |
 | `skills/receiving-code-review` | [obra/superpowers](https://github.com/obra/superpowers) v7.0.1 (commit `2ce8aa1`) | MIT (`LICENSE` ในโฟลเดอร์) | — |
+| `skills/find-skills` | [vercel-labs/skills](https://github.com/vercel-labs/skills) v1.9.0 (commit `57217cf`, เทียบเมื่อ 2026-11-21) | MIT © Vercel (`LICENSE` ในโฟลเดอร์ ก๊อปจาก root ของต้นทาง) | — |
 
 ที่เหลือ (`boss`, `ship`, `qa`, `next-static-pack`, `agents/`, `rules/`) เขียนขึ้นเองใน repo นี้
