@@ -17,7 +17,7 @@ Skill คือโฟลเดอร์ที่มีคำสั่ง สค�
 แกนหลักคือ **ทีม AI ที่แบ่งงานกันเอง** — **Opus** เป็น tech lead (คิด วางแผน แตกงาน
 รีวิว รวมงาน) และ **Sonnet** เป็น engineer ที่ลงมือเขียนโค้ดจริง — ครอบด้วย skill สำหรับ
 git flow, QA ก่อน release และ deploy ส่วนที่เหลือเป็น skill ที่รวบรวมมาจากภายนอก
-(Anthropic, 9arm, Karpathy, Cloudflare, superpowers) ซึ่งเก็บไว้ตามต้นฉบับ ดูที่มาและ license ได้ที่
+(Anthropic, 9arm, Karpathy, Cloudflare, superpowers, Vercel) ซึ่งเก็บไว้ตามต้นฉบับ ดูที่มาและ license ได้ที่
 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)
 
 ทุก skill อยู่ในโฟลเดอร์ของตัวเองใต้ [`skills/`](./skills) และมี `SKILL.md`
@@ -81,6 +81,12 @@ worktrees, finishing-a-development-branch) มาด้วย
 |---|---|---|
 | [`security-audit`](./skills/security-audit) | Cloudflare (MIT) | ถามเรื่องความปลอดภัย / รีวิวเฉพาะจุดใช้แบบ guidance ถ้าสั่ง "security audit โค้ดนี้" แบบเต็มจะรัน 6 เฟส: recon → hunting ตาม coverage ledger → ให้ agent อีกตัวพิสูจน์ซ้ำ → `findings.json` → ตรวจซ้ำ → `REPORT.md` ผลเขียนไว้นอก repo ที่ `~/security-audit-skill/<repo>/run-N` ต้องมี Node สำหรับ validator (แก้ให้รันบน Windows ได้แล้ว ดู [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)) |
 
+## หา skill เพิ่ม (รวมจากภายนอก)
+
+| skill | ที่มา | ใช้ตอนไหน |
+|---|---|---|
+| [`find-skills`](./skills/find-skills) | Vercel (MIT) | ถาม "มี skill สำหรับ X ไหม" / "ทำ X ยังไง" — ค้นใน [skills.sh](https://skills.sh/) ด้วย `npx skills find` เช็คยอดติดตั้งและแหล่งที่มาก่อนแนะนำ แล้วติดตั้งให้ด้วย `npx skills add -g` ต้องมี Node.js 22.20+ skill ที่ลงแบบนี้อยู่ใน `~/.claude/skills` ไม่ได้เข้า repo นี้ (อัปเดตด้วย `npx skills update`) |
+
 ## ตัวอย่างจาก Anthropic (Apache 2.0)
 
 | skill | ใช้ตอนไหน |
@@ -140,6 +146,7 @@ model ของเซสชัน (Opus) และไม่มีกฎ/รู�
 /plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
 /plugin install cloudflare-skills@ko-skills         # security-audit
 /plugin install superpowers-skills@ko-skills        # brainstorming, verification-before-completion, receiving-code-review
+/plugin install vercel-skills@ko-skills             # find-skills
 ```
 
 plugin ไม่รองรับ `rules/` — ถ้าอยากได้พฤติกรรมอัตโนมัติ (แตกงานเอง, ถาม QA ก่อน build)

@@ -6,6 +6,16 @@
 **คนดูแล repo:** bump version เมื่อไหร่ เพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดทุกครั้ง
 เขียนจากมุมคนใช้ (อะไรเปลี่ยนในพฤติกรรม / ต้องทำอะไรเพิ่ม) ไม่ใช่รายการไฟล์
 
+## 2.13.0 — 2026-11-21
+
+- เพิ่ม `find-skills` (จาก vercel-labs/skills): ถาม "มี skill สำหรับ X ไหม" แล้วมันจะค้นใน
+  [skills.sh](https://skills.sh/) ผ่าน `npx skills find` เช็คยอดติดตั้งกับแหล่งที่มาก่อนแนะนำ
+  และติดตั้งให้ด้วย `npx skills add <owner/repo@skill> -g -y`
+- **ต้องมี Node.js 22.20 ขึ้นไป** (CLI `skills` รันผ่าน npx ไม่ต้องติดตั้งแยก)
+- skill ที่ลงผ่าน `npx skills add -g` จะไปอยู่ใน `~/.claude/skills` ตรง ๆ ไม่ได้เข้า repo นี้
+  และ `update-skill-ko` จะไม่อัปเดตให้ ใช้ `npx skills update` แทน
+- ลงแบบ plugin: `/plugin install vercel-skills@ko-skills`
+
 ## 2.12.0 — 2026-11-21
 
 - `ship` อ่านธรรมเนียมของแต่ละ repo ให้ครบขึ้นก่อนเริ่ม: นอกจาก dev/develop และชื่อ feature
