@@ -70,13 +70,37 @@ finish release เข้า dev → **เปิด PR จาก dev เข้า
 master**. So in PMEC step 4 does **not** merge into master locally: finish into
 `develop` only, then step 5's PR is what moves master; tag after the PR is merged.
 
+## Repos that work on main directly — no branches
+
+Some repos skip this whole workflow. Check `git remote get-url origin` first;
+if it matches a row here, follow the row and ignore Flow A's branching, the
+step-3 "do not commit on main" check, and Flow B entirely.
+
+| repo (origin) | local folder | rule |
+|---|---|---|
+| `Kriangsak1416/ko-skills` | `D:\ko-skills` | edit, commit and push on **`main`** — no feature branch, no release branch, no PR, no tag |
+
+How a ko-skills change goes:
+
+1. `git switch main` and `git pull --ff-only origin main` (if HEAD sits on an
+   old feature branch with a clean tree, switch; uncommitted work on it → stop
+   and ask).
+2. Make the change. If installed behaviour changes, bump `metadata.version` in
+   `.claude-plugin/marketplace.json` and add a `## X.Y.Z — YYYY-MM-DD` entry on
+   top of `CHANGELOG.md` in the same commit — that bump is the release,
+   `update-skill-ko` compares it.
+3. Commit on main. Subject `<skill หรือส่วนที่แก้>: <สรุปภาษาไทย>` with no `#N`
+   (e.g. `framer-motion: เพิ่ม skill เช็คและใส่ animation ใน React/Next (2.11.0)`).
+4. `git push origin main` when the user asks to push ("อัพขึ้น git", "push").
+
 ## Flow A — feature work
 
 ### 1. Branch off dev
 
 This step runs **before any code is written** — not when the user asks to
 commit. Being asked to build a feature or fix a bug is the trigger; the user
-will not say "แตก branch". Check where you are first:
+will not say "แตก branch". Repos listed under "Repos that work on main
+directly" skip this step. Check where you are first:
 
 ```
 git rev-parse --abbrev-ref HEAD
@@ -124,7 +148,8 @@ Check the branch before staging anything:
 git rev-parse --abbrev-ref HEAD
 ```
 
-If it prints `dev`, `develop`, `main` or `master`, **do not commit here.** Cut
+If it prints `dev`, `develop`, `main` or `master`, **do not commit here**
+(unless the repo is listed under "Repos that work on main directly"). Cut
 the feature branch first as in step 1 (`git switch -c '#<n>_<slug>'` — the
 uncommitted changes come along), then commit on it. Commits reach dev only
 through Flow B's release merge, never directly.

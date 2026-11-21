@@ -6,7 +6,7 @@
 **คนดูแล repo:** bump version เมื่อไหร่ เพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดทุกครั้ง
 เขียนจากมุมคนใช้ (อะไรเปลี่ยนในพฤติกรรม / ต้องทำอะไรเพิ่ม) ไม่ใช่รายการไฟล์
 
-## 2.11.0 — 2026-11-21
+## 2.12.0 — 2026-11-21
 
 - `ship` อ่านธรรมเนียมของแต่ละ repo ให้ครบขึ้นก่อนเริ่ม: นอกจาก dev/develop และชื่อ feature
   branch แล้ว ดูด้วยว่า production เป็น `main` หรือ `master`, release branch เป็น
@@ -21,6 +21,22 @@
   (ใช้ login ของ `gh` เฉพาะคำสั่งนั้น ไม่แก้ config ของเครื่อง)
 - เทมเพลต PR ของ `ship`: ตั้งชื่อตาม PR release ก่อน ๆ ของ repo และต้องเขียนใน PR
   ถ้ามีอะไรขึ้นผิดลำดับ
+
+## 2.11.1 — 2026-11-21
+
+- `ship` + rule `branch-before-work`: repo `ko-skills` เองไม่ต้องแตก branch แล้ว
+  แก้ commit และ push บน `main` ได้เลย ไม่มี release branch, PR หรือ tag
+  การ bump `metadata.version` + `CHANGELOG.md` ใน commit เดียวกันถือเป็นการ release
+  repo อื่นยังใช้ flow เดิมทุกอย่าง
+
+## 2.11.0 — 2026-11-21
+
+- เพิ่ม `framer-motion`: ถามว่า "ใช้ framer-motion ได้ไหม" แล้วมันจะเช็ค peer dependency,
+  เวอร์ชัน React, animation library ที่มีอยู่ และ CSP ตอน deploy ก่อนแนะนำ
+  (โปรเจกต์ Vue / Laravel ใช้ไม่ได้ จะบอกแล้วหยุด) ถ้าใช้ได้ก็ใส่ animation แบบที่ทีมใช้:
+  `motion/react` + `LazyMotion` ให้ bundle เล็ก, `MotionConfig reducedMotion="user"`
+  และไม่ให้ animation เล่นซ้ำทุกรอบที่ dashboard ดึงข้อมูล
+- อยู่ใน `team-skills` (`/plugin install team-skills@ko-skills`)
 
 ## 2.10.0 — 2026-11-09
 
