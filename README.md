@@ -31,7 +31,7 @@ git flow, QA ก่อน release และ deploy ส่วนที่เห�
 skills/                           # skill ละโฟลเดอร์ (SKILL.md + references/scripts)
 agents/                           # subagent ที่ boss ใช้: coder / fixer / reviewer / scout
 rules/                            # กฎที่โหลดทุกเซสชัน (ต้องก๊อปมือ — plugin ไม่รองรับ rules)
-settings.json                     # ตัวอย่าง settings: lead = opus, subagent = sonnet, effort = high, permission พื้นฐาน
+settings.json                     # ตัวอย่าง settings: lead = opus, subagent = sonnet, effort = high, permission พื้นฐาน, plugin chrome-devtools-mcp
 template/SKILL.md                 # เทมเพลตเริ่ม skill ใหม่
 THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ skill ที่รวมมาจากที่อื่น
 CHANGELOG.md                      # มีอะไรเปลี่ยนในแต่ละ version — สคริปต์อัปเดตอ่านไฟล์นี้ไปบอกผู้ใช้
@@ -187,6 +187,24 @@ version หลัก (`metadata.version` ใน [`.claude-plugin/marketplace.jso
 ก๊อป `skills/`, `agents/`, `rules/` ไปไว้ใต้ `.claude/` ของโปรเจกต์นั้น
 (`.claude/skills/`, `.claude/agents/`, `.claude/rules/`) แล้ว commit เข้า git
 ทีมทั้งทีมได้ใช้เหมือนกันโดยไม่ต้องติดตั้งอะไร
+
+## Chrome DevTools (plugin แยก)
+
+ให้ Claude เปิด Chrome จริงมาดู console, network, performance trace, Lighthouse และ a11y ได้
+ไม่ได้ก๊อป skill มาไว้ใน repo นี้ เพราะต้องใช้ MCP server ของ plugin และ plugin อัปเดตจากต้นทางเอง
+(`update-skill-ko` ไม่แตะส่วนนี้) รันครั้งเดียวต่อเครื่อง:
+
+```
+/plugin marketplace add anthropics/claude-plugins-official
+/plugin install chrome-devtools-mcp@claude-plugins-official
+```
+
+แล้วรีสตาร์ต Claude Code ต้องมี Chrome รุ่น stable ปัจจุบัน และ Node.js 20.19+ / 22.12+ / 23+
+ก๊อปแค่ `enabledPlugins` จาก [`settings.json`](./settings.json) อย่างเดียวไม่ติดตั้งให้ ต้องรันคำสั่งข้างบน
+
+Google เก็บสถิติการใช้งานของ MCP server ตัวนี้เป็นค่าเริ่มต้น ถ้าไม่ต้องการให้ตั้ง environment variable
+`CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS=1` และ Claude เห็นทุกอย่างในหน้าเว็บที่เปิดผ่านตัวนี้
+อย่าใช้กับหน้าที่มีข้อมูลคนไข้จริง
 
 ## GitHub CLI (สำหรับ `/ship`)
 

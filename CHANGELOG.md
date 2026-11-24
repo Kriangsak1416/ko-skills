@@ -6,6 +6,16 @@
 **คนดูแล repo:** bump version เมื่อไหร่ เพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดทุกครั้ง
 เขียนจากมุมคนใช้ (อะไรเปลี่ยนในพฤติกรรม / ต้องทำอะไรเพิ่ม) ไม่ใช่รายการไฟล์
 
+## 2.14.0 — 2026-11-24
+
+- แนะนำ plugin `chrome-devtools-mcp` (จาก claude-plugins-official): ให้ Claude เปิด Chrome จริงมาดู
+  console, network, performance, Lighthouse และ a11y มีวิธีติดตั้งใน README และใส่ไว้ใน `settings.json` ตัวอย่าง
+- **ต้องติดตั้งเองครั้งเดียวต่อเครื่อง** (`update-skill-ko` ไม่ได้ลงให้):
+  `/plugin marketplace add anthropics/claude-plugins-official` แล้ว
+  `/plugin install chrome-devtools-mcp@claude-plugins-official`
+- ต้องมี Chrome รุ่น stable ปัจจุบัน และ Node.js 20.19+ / 22.12+ / 23+
+- Google เก็บสถิติการใช้งานเป็นค่าเริ่มต้น ปิดได้ด้วย `CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS=1`
+
 ## 2.13.0 — 2026-11-21
 
 - เพิ่ม `find-skills` (จาก vercel-labs/skills): ถาม "มี skill สำหรับ X ไหม" แล้วมันจะค้นใน
