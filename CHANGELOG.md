@@ -6,6 +6,25 @@
 **คนดูแล repo:** bump version เมื่อไหร่ เพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดทุกครั้ง
 เขียนจากมุมคนใช้ (อะไรเปลี่ยนในพฤติกรรม / ต้องทำอะไรเพิ่ม) ไม่ใช่รายการไฟล์
 
+## 2.15.0 — 2026-11-25
+
+- เพิ่ม `react-best-practices` (จาก vercel-labs/agent-skills): กฎ performance ของ React/Next.js ใช้เองตอนเขียน
+  หรือรีวิว React กฎกลุ่ม `server-*` ใช้ไม่ได้กับเว็บที่ static export ขึ้น Apache
+- เพิ่ม `web-design-guidelines` (จาก vercel-labs/agent-skills): สั่ง "ตรวจ UI" / "check accessibility" แล้วรายงานเป็น
+  `ไฟล์:บรรทัด` ใช้ตรวจอย่างเดียว การเลือกดีไซน์ยังเป็นของ `ko-design`
+- ลงแบบ plugin: ทั้งสองตัวอยู่ใน `/plugin install vercel-skills@ko-skills`
+- **เปลี่ยนชื่อ plugin** `anthropic-example-skills` เป็น `example-skills` เพราะ Claude Code สงวนชื่อที่ขึ้นต้นด้วย
+  `anthropic-` ใครลงแบบ plugin ไว้ต้องถอนชื่อเดิม แล้ว `/plugin install example-skills@ko-skills`
+  คนที่ใช้แบบก๊อปลง `~/.claude` ไม่ต้องทำอะไร
+- แนะนำ plugin เพิ่ม 4 ตัว (จาก claude-plugins-official): `php-lsp`, `typescript-lsp`, `context7` และ
+  `security-guidance` มีวิธีติดตั้งใน README และใส่ไว้ใน `settings.json` ตัวอย่าง
+- **ต้องติดตั้งเองครั้งเดียวต่อเครื่อง** (`update-skill-ko` ไม่ได้ลงให้): ลง language server ด้วย
+  `npm i -g intelephense typescript-language-server typescript@5.9.3` แล้วรัน
+  `claude plugin install <ชื่อ>@claude-plugins-official` ทีละตัว
+- อย่าใช้ TypeScript 7 กับ `typescript-lsp` เพราะไม่มี `tsserver.js`
+- `context7` ต้อง login ผ่าน `/mcp` หรือตั้ง `CONTEXT7_API_KEY` และห้ามใส่ข้อมูลคนไข้ในคำค้น
+- `security-guidance` รีวิว diff ด้วย Opus ตอนจบ turn และตอน commit/push จึงใช้โควตาเพิ่ม
+
 ## 2.14.0 — 2026-11-24
 
 - แนะนำ plugin `chrome-devtools-mcp` (จาก claude-plugins-official): ให้ Claude เปิด Chrome จริงมาดู

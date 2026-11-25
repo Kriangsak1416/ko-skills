@@ -31,7 +31,7 @@ git flow, QA ก่อน release และ deploy ส่วนที่เห�
 skills/                           # skill ละโฟลเดอร์ (SKILL.md + references/scripts)
 agents/                           # subagent ที่ boss ใช้: coder / fixer / reviewer / scout
 rules/                            # กฎที่โหลดทุกเซสชัน (ต้องก๊อปมือ — plugin ไม่รองรับ rules)
-settings.json                     # ตัวอย่าง settings: lead = opus, subagent = sonnet, effort = high, permission พื้นฐาน, plugin chrome-devtools-mcp
+settings.json                     # ตัวอย่าง settings: lead = opus, subagent = sonnet, effort = high, permission พื้นฐาน, plugin ที่แนะนำ
 template/SKILL.md                 # เทมเพลตเริ่ม skill ใหม่
 THIRD_PARTY_NOTICES.md            # ที่มาและ license ของ skill ที่รวมมาจากที่อื่น
 CHANGELOG.md                      # มีอะไรเปลี่ยนในแต่ละ version — สคริปต์อัปเดตอ่านไฟล์นี้ไปบอกผู้ใช้
@@ -80,6 +80,13 @@ worktrees, finishing-a-development-branch) มาด้วย
 | skill | ที่มา | ใช้ตอนไหน |
 |---|---|---|
 | [`security-audit`](./skills/security-audit) | Cloudflare (MIT) | ถามเรื่องความปลอดภัย / รีวิวเฉพาะจุดใช้แบบ guidance ถ้าสั่ง "security audit โค้ดนี้" แบบเต็มจะรัน 6 เฟส: recon → hunting ตาม coverage ledger → ให้ agent อีกตัวพิสูจน์ซ้ำ → `findings.json` → ตรวจซ้ำ → `REPORT.md` ผลเขียนไว้นอก repo ที่ `~/security-audit-skill/<repo>/run-N` ต้องมี Node สำหรับ validator (แก้ให้รันบน Windows ได้แล้ว ดู [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)) |
+
+## React / UI (รวมจากภายนอก)
+
+| skill | ที่มา | ใช้ตอนไหน |
+|---|---|---|
+| [`react-best-practices`](./skills/react-best-practices) | Vercel (MIT) | เขียน / รีวิว / refactor React หรือ Next.js ให้เร็วขึ้น: โหลดข้อมูลขนาน ลด bundle ลด re-render กฎกลุ่ม `server-*` ใช้ไม่ได้กับเว็บที่ static export ขึ้น Apache |
+| [`web-design-guidelines`](./skills/web-design-guidelines) | Vercel (MIT) | ตรวจ UI / accessibility / UX ของหน้าเว็บที่มีอยู่ รายงานเป็น `ไฟล์:บรรทัด` ใช้ตรวจอย่างเดียว การเลือกดีไซน์ยังเป็นของ `ko-design` กฎตัวอักษรอังกฤษ (Title Case, curly quotes) ไม่ต้องใช้กับข้อความไทย |
 
 ## หา skill เพิ่ม (รวมจากภายนอก)
 
@@ -143,10 +150,10 @@ model ของเซสชัน (Opus) และไม่มีกฎ/รู�
 ```
 /plugin install team-skills@ko-skills               # boss + agents, karpathy-guidelines, ship, qa, next-static-pack, framer-motion, ollama-worker, update-skill-ko
 /plugin install 9arm-skills@ko-skills               # debug-mantra, scrutinize, post-mortem, management-talk
-/plugin install anthropic-example-skills@ko-skills  # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
+/plugin install example-skills@ko-skills            # skill-creator, mcp-builder, webapp-testing, frontend-design, doc-coauthoring
 /plugin install cloudflare-skills@ko-skills         # security-audit
 /plugin install superpowers-skills@ko-skills        # brainstorming, verification-before-completion, receiving-code-review
-/plugin install vercel-skills@ko-skills             # find-skills
+/plugin install vercel-skills@ko-skills             # find-skills, react-best-practices, web-design-guidelines
 ```
 
 plugin ไม่รองรับ `rules/` — ถ้าอยากได้พฤติกรรมอัตโนมัติ (แตกงานเอง, ถาม QA ก่อน build)
@@ -205,6 +212,31 @@ version หลัก (`metadata.version` ใน [`.claude-plugin/marketplace.jso
 Google เก็บสถิติการใช้งานของ MCP server ตัวนี้เป็นค่าเริ่มต้น ถ้าไม่ต้องการให้ตั้ง environment variable
 `CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS=1` และ Claude เห็นทุกอย่างในหน้าเว็บที่เปิดผ่านตัวนี้
 อย่าใช้กับหน้าที่มีข้อมูลคนไข้จริง
+
+## LSP, Context7 และ Security Guidance (plugin แยก)
+
+| plugin | ใช้ทำอะไร | ต้องเตรียม |
+|---|---|---|
+| `php-lsp` | หา definition / reference และดู error ในไฟล์ PHP | `intelephense` |
+| `typescript-lsp` | แบบเดียวกันสำหรับ TS / JS | `typescript-language-server` และ `typescript@5.9.3` |
+| `context7` | ดึงเอกสาร library ให้ตรงเวอร์ชันที่โปรเจกต์ใช้ | login ผ่าน `/mcp` หรือตั้ง `CONTEXT7_API_KEY` |
+| `security-guidance` | เตือนช่องโหว่ตอนแก้ไฟล์ และรีวิว diff ตอนจบ turn กับตอน commit/push | Python 3.8+ |
+
+ติดตั้งจากต้นทางและ `update-skill-ko` ไม่แตะส่วนนี้ รันครั้งเดียวต่อเครื่อง แล้วรีสตาร์ต Claude Code:
+
+```powershell
+npm i -g intelephense typescript-language-server typescript@5.9.3
+claude plugin marketplace add anthropics/claude-plugins-official
+claude plugin install php-lsp@claude-plugins-official
+claude plugin install typescript-lsp@claude-plugins-official
+claude plugin install context7@claude-plugins-official
+claude plugin install security-guidance@claude-plugins-official
+```
+
+- ต้องระบุ `typescript@5.9.3` เพราะ TypeScript 7 ไม่มี `tsserver.js` ที่ `typescript-language-server` ใช้
+- คำค้นของ `context7` ส่งออกไปที่ Upstash ห้ามใส่ข้อมูลคนไข้หรือความลับของระบบ
+- `security-guidance` ส่ง diff และเนื้อหาไฟล์ที่แก้ไปให้โมเดลตรวจ (ค่าเริ่มต้นคือ Opus) จึงใช้โควตาเพิ่ม
+  และ hook ทำให้แต่ละ turn ช้าลงไม่กี่วินาที ตัวเลือกปรับอยู่ใน README ของ plugin
 
 ## GitHub CLI (สำหรับ `/ship`)
 

@@ -23,5 +23,7 @@ skills ใน repo นี้บางตัวคัดลอกมาจาก�
 | `skills/verification-before-completion` | [obra/superpowers](https://github.com/obra/superpowers) v7.0.1 (commit `2ce8aa1`) | MIT (`LICENSE` ในโฟลเดอร์) | — |
 | `skills/receiving-code-review` | [obra/superpowers](https://github.com/obra/superpowers) v7.0.1 (commit `2ce8aa1`) | MIT (`LICENSE` ในโฟลเดอร์) | — |
 | `skills/find-skills` | [vercel-labs/skills](https://github.com/vercel-labs/skills) v1.9.0 (commit `57217cf`, เทียบเมื่อ 2026-11-21) | MIT © Vercel (`LICENSE` ในโฟลเดอร์ ก๊อปจาก root ของต้นทาง) | — |
+| `skills/react-best-practices` | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) (commit `5a37a63`, เทียบเมื่อ 2026-11-25) | MIT (ระบุใน `SKILL.md` ต้นทางไม่มีไฟล์ LICENSE) | — |
+| `skills/web-design-guidelines` | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) (commit `5a37a63`, เทียบเมื่อ 2026-11-25) กฎจาก [web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines) (commit `434b7f9`) | MIT (ระบุใน README ของ agent-skills ต้นทางไม่มีไฟล์ LICENSE) | — |
 
 ที่เหลือ (`boss`, `ship`, `qa`, `next-static-pack`, `agents/`, `rules/`) เขียนขึ้นเองใน repo นี้
