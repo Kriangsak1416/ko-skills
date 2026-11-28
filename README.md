@@ -281,9 +281,10 @@ Opus จะ: สำรวจโค้ด → ตัดสินใจดีไ�
 ขณะอยู่บน dev/develop/main Claude จะแตก `#N_slug` ก่อนเริ่มงาน และไม่ commit ลง dev/main ตรง ๆ
 
 งานหน้าบ้านที่ต้องแก้ API ด้วย — ทุกโปรเจคใช้ API repo เดียวกัน (ถาม path ครั้งแรกแล้วจำไว้ใน
-`~/.claude/ship.json`) Claude จะแตก branch เลขเดียวกันใน API เป็น `git worktree` แยกโฟลเดอร์
-(`<api>.wt/57`) รันที่ port `8000 + N` ทำให้หลายโปรเจครัน API ของตัวเองพร้อมกันได้ แก้ API
-แบบเพิ่มอย่างเดียว (จะแก้/ลบ endpoint เดิมต้องถามก่อน) และตอนขึ้น PRD ฝั่ง API ขึ้นก่อนหน้าบ้าน
+`~/.claude/ship.json`) Claude จะแตก branch เลขเดียวกันใน checkout ของ API repo เอง ไม่สร้าง
+`git worktree` แยกโฟลเดอร์ API ที่รันบนเครื่องจึงเสิร์ฟ branch นั้นเลย ทำ API ได้ทีละงาน
+(ก่อนสลับ branch จะเช็คว่างานเดิม push แล้ว) push ทุกครั้งที่จบช่วงงาน เสร็จแล้วกลับไป develop
+แก้ API แบบเพิ่มอย่างเดียว (จะแก้/ลบ endpoint เดิมต้องถามก่อน) และตอนขึ้น PRD ฝั่ง API ขึ้นก่อนหน้าบ้าน
 
 PR ตั้ง title เป็น `v.1.0.0 - 2026-08-01` และ description ไล่ว่าอัพอะไร ทดสอบอะไร
 มีผลกระทบอะไร — เทมเพลตอยู่ที่ [`skills/ship/references/pr-template.md`](./skills/ship/references/pr-template.md)

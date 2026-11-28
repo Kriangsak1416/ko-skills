@@ -6,6 +6,15 @@
 **คนดูแล repo:** bump version เมื่อไหร่ เพิ่มหัวข้อ `## X.Y.Z — YYYY-MM-DD` บนสุดทุกครั้ง
 เขียนจากมุมคนใช้ (อะไรเปลี่ยนในพฤติกรรม / ต้องทำอะไรเพิ่ม) ไม่ใช่รายการไฟล์
 
+## 2.16.0 — 2026-11-28
+
+- `ship`: งานหน้าบ้านที่ต้องแก้ API **ไม่สร้าง `git worktree` แล้ว** แตก branch เลขเดียวกันใน checkout ของ API repo เอง
+  API ที่รันบนเครื่องเสิร์ฟ branch นั้นเลย ไม่ต้องเปิด `php -S` / port `8000 + N` / ก๊อป `.env` / `composer install` แยก
+- ก่อนสลับ branch ของ API จะเช็คว่างานเดิม commit และ push แล้ว ถ้ายังค้างจะถามก่อน ; แตกด้วย `--no-track`
+  ไม่ให้ branch ผูก upstream กับ develop ; stage ทีละไฟล์ (ไม่ `git add -A`) เพราะ checkout มีไฟล์ config ของเครื่องค้าง
+- push งาน API ทุกครั้งที่จบช่วงงาน เสร็จแล้วกลับไป develop และ pull ; ตอนขึ้น PRD ลบ branch API ด้วย `branch -d`
+- ถ้ายังมี worktree แบบเก่าค้าง Claude จะรายงานว่ามีตัวไหนและมีงานที่ยังไม่ push ไหม แต่จะไม่ลบเองโดยไม่ถาม
+
 ## 2.15.0 — 2026-11-25
 
 - เพิ่ม `react-best-practices` (จาก vercel-labs/agent-skills): กฎ performance ของ React/Next.js ใช้เองตอนเขียน

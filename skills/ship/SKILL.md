@@ -1,6 +1,6 @@
 ---
 name: ship
-description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>` (or the repo's own scheme, e.g. `feature/<slug>`), commit in Thai and push, then cut a release branch (`v.X.Y.Z` or `release/X.Y.Z`, per repo), finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first, and before any commit that would land on dev/develop/main. Also use when frontend work needs the shared API changed — it opens a matching API branch as a git worktree on its own port.
+description: This team's git workflow — branch off the repo's integration branch (dev/develop) as `[feature/]#<n>_<slug>` (or the repo's own scheme, e.g. `feature/<slug>`), commit in Thai and push, then cut a release branch (`v.X.Y.Z` or `release/X.Y.Z`, per repo), finish the release git-flow style, and open a pull request from dev to main for someone else to approve. Use whenever the user starts a feature branch, wants finished work committed and pushed, cuts a version, or ships to production — "อัพงาน", "ขึ้น PRD", "ทำ release", "เปิด PR", "commit ให้หน่อย". Also use BEFORE the first edit of any code change (feature, bug fix, refactor — "เพิ่มฟีเจอร์", "แก้บั๊ก", "เริ่มงานใหม่") while HEAD is on dev/develop/main, to cut the feature branch first, and before any commit that would land on dev/develop/main. Also use when frontend work needs the shared API changed — it opens a matching API branch in the API repo's own checkout (no worktree).
 ---
 
 # Ship — feature branch → release → PR
@@ -78,7 +78,7 @@ step-3 "do not commit on main" check, and Flow B entirely.
 
 | repo (origin) | local folder | rule |
 |---|---|---|
-| `Kriangsak1416/ko-skills` | `D:\ko-skills` | edit, commit and push on **`main`** — no feature branch, no release branch, no PR, no tag |
+| `Kriangsak1416/ko-skills` | `D:\My windows app\ko-skills` | edit, commit and push on **`main`** — no feature branch, no release branch, no PR, no tag |
 
 How a ko-skills change goes:
 
@@ -181,9 +181,10 @@ a PR and does not touch dev.
 ## The shared API — when the work also changes the backend
 
 Every frontend project of this user calls one API repo of their own, run
-locally for dev. Two projects in progress at once would fight over that one
-checkout, so each task gets its own **worktree** of the API: its own folder, its
-own branch, its own port.
+locally for dev from its one checkout. The API work happens on a branch in that
+same checkout — **never create a `git worktree`** for it. One checkout holds one
+API task at a time, so a second task waits until the first one's API branch is
+pushed.
 
 ### Where the API repo lives
 
@@ -205,36 +206,56 @@ the API in a session:**
 Skip all of this when the current repo **is** the API repo — then it is
 ordinary Flow A.
 
-### Cut the API branch as a worktree
+### Cut the API branch in the API repo's own checkout
 
 When a frontend task needs an API change, cut the matching API branch right
 after the frontend branch, before writing API code. Same `#N` and slug; the
 prefix follows the API repo's own convention (look, as in "Match the repo").
-The folder sits next to the API repo, named by the number only — no `#` in
-paths:
+
+**Check the checkout first** (`git -C '<api_repo>' status --short` and
+`git -C '<api_repo>' log '@{u}..' --oneline` where there is an upstream — quote
+`'@{u}..'`, PowerShell reads a bare `@{` as a hashtable):
+
+- On develop, or on a branch whose work is committed and pushed → go ahead.
+- On another task's branch with uncommitted work or unpushed commits → stop and
+  ask; do not switch away from it.
+- Edits that are local to this machine and must never be committed (e.g. DB
+  credentials in a config file) stay in the working tree across switches.
+  Leave them alone and never stage them.
 
 ```
 git -C '<api_repo>' fetch origin
-git -C '<api_repo>' worktree add '<api_repo>.wt/57' -b 'feature/#57_ward_dashboard' origin/develop
+git -C '<api_repo>' switch -c 'feature/#57_ward_dashboard' --no-track origin/develop
 ```
 
-If `<api_repo>.wt/57` already exists, this task already has its API — reuse it.
+`--no-track` keeps the new branch from tracking develop; the first push sets its
+real upstream. If the branch already exists locally, `switch` to it instead. If
+git refuses to switch because a local edit would be overwritten, stop and ask.
 
-A new worktree has no `vendor/` and no `.env`. Set it up, then run it on port
-`8000 + N` (8057 for `#57`) in the background:
+The local API server already serves this checkout, so there is no extra server,
+port, `.env` or `vendor/` to set up, and the frontend keeps its usual API URL.
+If that server caches compiled code (opcache and the like), reload it after the
+switch so the new branch is what answers. Say in one line which API branch this
+task uses.
+
+Commit and push exactly as steps 3–4, with `git -C`, with two additions:
+
+- Stage this task's files by path — never `git add -A` or `git add .`, which
+  would sweep in the machine-local edits above.
+- Push at the end of every working session (`git -C '<api_repo>' push -u origin
+  '<branch>'`), so no API work lives only on this machine.
+
+When the task's API work is pushed, put the checkout back on current develop so
+the local API serves what everyone else has:
 
 ```
-cp '<api_repo>/.env' '<api_repo>.wt/57/.env'
-composer install -d '<api_repo>.wt/57'
-php -S localhost:8057 -t '<api_repo>.wt/57/public'
+git -C '<api_repo>' switch develop
+git -C '<api_repo>' pull --ff-only origin develop
 ```
 
-Point the frontend's local API URL at `http://localhost:8057` — only in a
-git-ignored env file (`.env.local` and the like). If the setting lives in a
-tracked file, tell the user what to change instead. Say in one line which API
-branch, folder and port this task uses.
-
-Commit and push in the worktree exactly as steps 3–4, with `git -C`.
+If `git -C '<api_repo>' worktree list` shows worktrees left from the old way of
+working, tell the user which ones and whether each has unpushed work; do not
+remove them without asking.
 
 ### Change the API by adding, never by changing
 
@@ -244,7 +265,7 @@ change the meaning of what exists. **Before changing or removing an existing
 endpoint, response field, or column, stop and ask** — another project may
 depend on it. When it truly must change, add `/v2/...` beside the old one.
 
-The local dev database is shared by every worktree: a migration that alters a
+The local dev database is shared by every task: a migration that alters a
 table another task also touches can break that task's API. Additive migrations
 avoid it.
 
@@ -294,8 +315,8 @@ alive together.
 
 Only the branches the user names — not everything that exists.
 
-**API first.** If any of these branches has an API counterpart (a worktree at
-`<api_repo>.wt/<n>`, or a branch with the same `#N` on the API's origin), run
+**API first.** If any of these branches has an API counterpart (a branch with
+the same `#N` in the API repo, locally or on its origin), run
 Flow B in the API repo for those branches first — its own version, release, and
 PR — and finish it before this release. The API change is additive, so it is
 safe in PRD before the frontend that calls it. Say so in one line.
@@ -348,21 +369,14 @@ git branch -d '#1_add_text_builder'
 Use `-d`, never `-D`: if git refuses because the branch is not fully merged,
 stop and report — that branch has work the release does not carry.
 
-In the API repo, a shipped branch is still checked out in its worktree, and git
-will not delete a checked-out branch. Stop its `php -S` first, then remove the
-worktree, then the branch:
+Do the same for the shipped API branches. Git will not delete the branch the
+API checkout is on, so put the checkout back on develop first (the check and the
+two commands at the end of "Cut the API branch in the API repo's own checkout"),
+then:
 
 ```
-git -C '<api_repo>' worktree remove '<api_repo>.wt/57'
 git -C '<api_repo>' branch -d 'feature/#57_ward_dashboard'
-rmdir '<api_repo>.wt'
 ```
-
-`worktree remove` deletes the whole folder, git-ignored `vendor/` and `.env`
-included. It refuses when the folder has uncommitted changes or untracked files
-— stop and report, do not add `--force`. The last line removes the `.wt` parent
-only once it is empty; when another task's worktree is still in it, `rmdir`
-fails and the folder stays — that is fine.
 
 **If `git push origin main` is rejected**, main is a protected branch that only
 accepts an approved PR — which is the normal setup for this flow. Undo the local
