@@ -173,6 +173,10 @@ cp    rules/*.md ~/.claude/rules/
 ทับเฉพาะไฟล์ชื่อเดียวกัน agent/skill/rule อื่นที่มีอยู่ไม่หาย
 แล้วเช็คว่า `~/.claude/settings.json` มี `"model": "opus"` หรือยัง — `boss` คาดว่า lead
 เป็น opus ถ้ายังไม่ตรงตั้งด้วย `/model opus` หรือเทียบกับ [`settings.json`](./settings.json)
+
+ก๊อป `skillOverrides` จาก [`settings.json`](./settings.json) ไปไว้ใน `~/.claude/settings.json` ด้วย —
+Claude Code มี skill ในตัวชื่อ `ship-local` ที่รับชื่อ `/ship` ซ้ำกับ `ship` ของ repo นี้ และ `steward`
+ที่เฝ้า PR แบบของมันเอง ปิดทั้งสองตัวเพื่อให้ `/ship` เป็น flow ของทีม (#N → release → PR dev → main) เท่านั้น
 จากนั้นรีสตาร์ต Claude Code
 
 ## อัปเดต — skill `update-skill-ko` (สำหรับแบบที่ 2)

@@ -14,6 +14,8 @@
   ไม่ให้ branch ผูก upstream กับ develop ; stage ทีละไฟล์ (ไม่ `git add -A`) เพราะ checkout มีไฟล์ config ของเครื่องค้าง
 - push งาน API ทุกครั้งที่จบช่วงงาน เสร็จแล้วกลับไป develop และ pull ; ตอนขึ้น PRD ลบ branch API ด้วย `branch -d`
 - ถ้ายังมี worktree แบบเก่าค้าง Claude จะรายงานว่ามีตัวไหนและมีงานที่ยังไม่ push ไหม แต่จะไม่ลบเองโดยไม่ถาม
+- `settings.json` ตัวอย่างปิด skill ในตัวของ Claude Code 2 ตัวด้วย `skillOverrides`: `ship-local` (รับชื่อ `/ship` ซ้ำกับ
+  `ship` ของ repo นี้) และ `steward` — **ต้องก๊อป `skillOverrides` ไปไว้ใน `~/.claude/settings.json` แล้วรีสตาร์ต** `/ship` จึงจะเป็น flow ของทีม
 
 ## 2.15.0 — 2026-11-25
 
